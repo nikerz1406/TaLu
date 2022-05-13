@@ -1,8 +1,9 @@
 import { combineReducers } from "redux";
 import refrigetatorReducer from "./refrigetator";
-import tableReducer from "./table";
+import { foodsReducer,filterReducer } from "./foods";
 const rootReducer = combineReducers({
-    table : tableReducer,
-    refrigetator : refrigetatorReducer
+    foods : foodsReducer,
+    refrigetator : refrigetatorReducer,
+    filterFoods:filterReducer,
 })
 export default rootReducer;

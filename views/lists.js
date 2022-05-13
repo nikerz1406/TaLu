@@ -1,97 +1,54 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ useEffect, useState,useMemo } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons,MaterialIcons } from '@expo/vector-icons';
-
-const DATA = [
-  {
-    id:"1",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:1
-  },
-  {
-    id:"2",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:2
-  },
-  {
-    id:"3",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:0
-  },
-  {
-    id:"4",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:1
-  },
-  {
-    id:"5",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:1
-  },
-  {
-    id:"6",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:2
-  },
-  {
-    id:"7",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:0
-  },
-  {
-    id:"8",
-    date:'10/10/2022',
-    time:'PM 9h30',
-    type:1
-  },
-];
+import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
 
 
-const clickFilter = ()=>{
-  console.log("click filter")
+const clickFilter = (dispatch,setColorFilterType,flatListRef,type)=>{
+  dispatch({type:"FILTER_TYPE"});
+  dispatch({type:"SORT_TYPE",filterType:type});
+  var color = type == 0 ? "#EF5350" : type == 1 ? "#FDD835" : "#66BB6A";
+  setColorFilterType(color);
+  flatListRef.scrollToOffset({ animated: true, offset: 0 });
 }
-const clickName = ()=>{
-  console.log("click name")
+const clickName = (dispatch,setColorFilterName,name)=>{
+  
+  dispatch({type:"FILTER_NAME"});
+  var icon = name ? 'arrow-down' : 'arrow-up';
+  setColorFilterName(icon);
+  dispatch({type:"SORT_NAME",filterName:name});
 }
 const clickDate = ()=>{
   console.log("click date")
 }
-const clickRemove = (i)=>{
-  console.log(i)
-  console.log("click remove")
+
+const onEnd = (dispatch) => {
+  var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
+  var today  = new Date();
+  var type = Math.floor(Math.random() * 3);
+  var item = {
+    id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
+    name:id
+  }
+
+  // // var new_data = [...listFoods,item];
+  dispatch({
+    type:"GET_FOODS",payload:item
+  });
+
+  console.log("end scroll")
+
 }
 
 export const Lists = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const [listFoods,setLisFoods ] =  useState(DATA);
-  const [visible, setVisible] = useState(false);
-
-  const renderItem = ({ item }) => (
-    <Item item={item} />
-  );
+  const listFoods = useSelector((state) => state.foods);
+  const filterFoods = useSelector((state) => state.filterFoods);
+  var flatListRef = null;
+  const [colorFilterName,setColorFilterName] = useState('md-search-outline');
+  const [colorFilterType,setColorFilterType] = useState('black');
+  const dispatch = useDispatch();
   
-
-  const onEnd = (listFoods,setLisFoods) => {
-    var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
-    var today  = new Date();
-    var type = Math.floor(Math.random() * 3);
-    var item = {
-      id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type
-    }
-  
-    setLisFoods([...listFoods,item]);
-  
-    console.log("end scroll")
-  
-  }
-
   const fetchData = () => {
     // dispatch(getAllTopicAction(userParamData));
     setIsFetching(false);
@@ -111,13 +68,13 @@ export const Lists = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.head_table}>
         <View style={styles.fitler}>
-          <TouchableOpacity onPress={ clickFilter }>
-           <MaterialCommunityIcons name="filter" size={25}/>
+          <TouchableOpacity onPress={ ()=>clickFilter(dispatch,setColorFilterType,flatListRef,filterFoods.type) }>
+           <MaterialCommunityIcons name="filter" size={25} color={colorFilterType}/>
           </TouchableOpacity>
         </View>
         <View style={styles.name}>
-          <TouchableOpacity onPress={ clickName } style={{width:"30%"}}>
-            <Text>Name <MaterialIcons name="search"/></Text>
+          <TouchableOpacity onPress={() => clickName(dispatch,setColorFilterName,filterFoods.name) } style={{width:"30%"}}>
+            <Text>Name <Ionicons name={colorFilterName} /></Text>
           </TouchableOpacity>
         </View>
         <View style={styles.plus}>
@@ -135,10 +92,11 @@ export const Lists = () => {
           // backgroundColor:"red",
           width:"100%"}}
         data={listFoods}
-        renderItem={renderItem}
+        renderItem={({item}) =>renderItem({item,dispatch})}
+        ref={(ref) => { flatListRef = ref; }}
         keyExtractor={item => item.id}
         onEndReachedThreshold={0.5}
-        onEndReached={onEnd}
+        onEndReached={()=>onEnd(dispatch)}
         ListEmptyComponent={<Empty/>}
         progressViewOffset={100}
         onRefresh={onRefresh}
@@ -159,34 +117,48 @@ const styles = StyleSheet.create({
   },
   head_table:{ flexDirection:"row",marginBottom:10,borderBottomColor:"#757575",borderBottomWidth:1,marginHorizontal:20,paddingBottom:10},
   item: {
-    backgroundColor: '#BBDEFB',
+    backgroundColor: '#FCE4EC',
     flexDirection:"row",
     marginBottom: 8,
     paddingVertical:20,
     marginHorizontal: 8,
     borderRadius:4,
   },
-  fitler:{ flex:1 },
+  fitler:{ 
+    flex:1,
+    justifyContent: 'center'
+  },
   name:{ flex:6,marginLeft:15 },
   plus:{ flex:3,flexDirection:"row" },
-  date_body:{flex:2}
+  date_body:{
+    flex:2,
+    marginRight:10
+  }
 });
 
-const Item = ({ item }) => {
-  const color = item.type == 0 ? "red" : item.type == 1 ? "yellow" : "green";
-  const id = item.id;
-  return(
-    <View style={styles.item}>
-    <View style={styles.fitler}>
-      <TouchableOpacity onPress={ ()=>clickRemove(id) } style={{ marginLeft:15 }}>
-        <MaterialCommunityIcons name="circle" size={20} style={{ color:color }}/>
-      </TouchableOpacity>  
-    </View>
-    <View style={styles.name}><Text>{item.id}</Text></View>
-    <View style={styles.date_body}><Text>{item.date}</Text><Text>{item.time}</Text></View>
-  </View>
-  )
-}
+
 const Empty = () =>(
   <View style={{ width:"100%",paddingHorizontal:20,alignItems:"center"}}><Text>No Found Data</Text></View>
 )
+
+const renderItem = ({ item,dispatch }) => {
+
+  const color = item.type == 0 ? "#EF5350" : item.type == 1 ? "#FDD835" : "#66BB6A";
+  // const dispatch = useDispatch();
+  const clickRemove = ()=>{
+
+    dispatch({type:"REMOVE_FOOD",id:item.id})
+    console.log("remove");
+  }
+  return(
+    <View style={styles.item}>
+    <View style={styles.fitler}>
+      <TouchableOpacity onPress={ clickRemove } style={{ marginLeft:10 }}>
+        <Ionicons name="remove-circle" size={32} color={color} />
+      </TouchableOpacity>  
+    </View>
+    <View style={styles.name}><Text>{item.name}</Text></View>
+    <View style={styles.date_body}><Text>{item.date}</Text><Text>{item.time}</Text></View>
+  </View>
+  )
+};     
