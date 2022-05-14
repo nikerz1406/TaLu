@@ -1,25 +1,37 @@
-import React,{ useEffect, useState,useMemo } from 'react';
+import React,{ useEffect, useState } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
-
-const clickFilter = (dispatch,setColorFilterType,flatListRef,type)=>{
+const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
+  console.log("click filter")
   dispatch({type:"FILTER_TYPE"});
-  dispatch({type:"SORT_TYPE",filterType:type});
-  var color = type == 0 ? "#EF5350" : type == 1 ? "#FDD835" : "#66BB6A";
-  setColorFilterType(color);
+  dispatch({type:"SORT_TYPE",filterType:mode});
+
+  var color = mode == 0 ? "#EF5350" : mode == 1 ? "#FDD835" : "#66BB6A";
+  filterIcon({type:color})
+
   flatListRef.scrollToOffset({ animated: true, offset: 0 });
 }
-const clickName = (dispatch,setColorFilterName,name)=>{
-  
+const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
+  console.log("click filter name")
+
   dispatch({type:"FILTER_NAME"});
-  var icon = name ? 'arrow-down' : 'arrow-up';
-  setColorFilterName(icon);
-  dispatch({type:"SORT_NAME",filterName:name});
+  dispatch({type:"SORT_NAME",filterName:mode});
+
+  var icon = mode ? 'arrow-down' : 'arrow-up';
+  filterIcon({name:icon})
+
+  flatListRef.scrollToOffset({ animated: true, offset: 0 });
 }
-const clickDate = ()=>{
+const clickDate = (dispatch,mode,filterIcon)=>{
   console.log("click date")
+  dispatch({type:"FILTER_DATE"});
+  dispatch({type:"SORT_DATE",filterDate:mode});
+
+  var icon = mode ? 'calendar-text' : 'calendar-week';
+  filterIcon({date:icon})
+
 }
 
 const onEnd = (dispatch) => {
@@ -31,7 +43,7 @@ const onEnd = (dispatch) => {
     name:id
   }
 
-  // // var new_data = [...listFoods,item];
+  // var new_data = [...listFoods,item];
   dispatch({
     type:"GET_FOODS",payload:item
   });
@@ -45,8 +57,21 @@ export const Lists = () => {
   const listFoods = useSelector((state) => state.foods);
   const filterFoods = useSelector((state) => state.filterFoods);
   var flatListRef = null;
-  const [colorFilterName,setColorFilterName] = useState('md-search-outline');
+  const [iconFilterName,setIconFilterName] = useState('md-search-outline');
   const [colorFilterType,setColorFilterType] = useState('black');
+  const [iconFilterDate,setIconFilterDate] = useState('text-search');
+
+  const filterIcon = function({ 
+    // default value
+    name='md-search-outline',
+    type='black',
+    date='text-search'
+  }){
+    setColorFilterType(type)
+    setIconFilterName(name)
+    setIconFilterDate(date)
+  }
+
   const dispatch = useDispatch();
   
   const fetchData = () => {
@@ -54,12 +79,8 @@ export const Lists = () => {
     setIsFetching(false);
   };
   
-  const clickPlus = ()=>{
-    console.log("click plus")
-    setVisible(true)
-  }
-
   const onRefresh = () => {
+    console.log("refresh")
     setIsFetching(true);
     fetchData();
   };
@@ -68,21 +89,18 @@ export const Lists = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.head_table}>
         <View style={styles.fitler}>
-          <TouchableOpacity onPress={ ()=>clickFilter(dispatch,setColorFilterType,flatListRef,filterFoods.type) }>
+          <TouchableOpacity onPress={ ()=>clickFilter(dispatch,flatListRef,filterFoods.type,filterIcon) }>
            <MaterialCommunityIcons name="filter" size={25} color={colorFilterType}/>
           </TouchableOpacity>
         </View>
         <View style={styles.name}>
-          <TouchableOpacity onPress={() => clickName(dispatch,setColorFilterName,filterFoods.name) } style={{width:"30%"}}>
-            <Text>Name <Ionicons name={colorFilterName} /></Text>
+          <TouchableOpacity onPress={() => clickName(dispatch,flatListRef,filterFoods.name,filterIcon) } style={{width:"30%"}}>
+            <Text syle={{ fontWeight:"bold" }}>Name <Ionicons name={iconFilterName} /></Text>
           </TouchableOpacity>
         </View>
         <View style={styles.plus}>
-          <TouchableOpacity onPress={ clickDate } style={{ flex:2 }}>
-            <MaterialCommunityIcons  name="text-search" size={25}/>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={ clickPlus } style={{ flex:1 }}>
-            <MaterialCommunityIcons name="plus-circle-outline" size={25}/>
+          <TouchableOpacity onPress={() => clickDate(dispatch,filterFoods.date,filterIcon) }>
+            <MaterialCommunityIcons  name={iconFilterDate} size={25}/>
           </TouchableOpacity>
         </View>
       </View>
@@ -92,7 +110,7 @@ export const Lists = () => {
           // backgroundColor:"red",
           width:"100%"}}
         data={listFoods}
-        renderItem={({item}) =>renderItem({item,dispatch})}
+        renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
         ref={(ref) => { flatListRef = ref; }}
         keyExtractor={item => item.id}
         onEndReachedThreshold={0.5}
@@ -129,19 +147,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   name:{ flex:6,marginLeft:15 },
-  plus:{ flex:3,flexDirection:"row" },
+  plus:{ 
+    justifyContent: 'flex-end',
+    alignItems:"flex-end",
+    flex:2,
+   },
   date_body:{
     flex:2,
     marginRight:10
   }
 });
 
-
 const Empty = () =>(
   <View style={{ width:"100%",paddingHorizontal:20,alignItems:"center"}}><Text>No Found Data</Text></View>
 )
 
-const renderItem = ({ item,dispatch }) => {
+const renderItem = ({ item,dispatch,mode }) => {
 
   const color = item.type == 0 ? "#EF5350" : item.type == 1 ? "#FDD835" : "#66BB6A";
   // const dispatch = useDispatch();
@@ -154,11 +175,19 @@ const renderItem = ({ item,dispatch }) => {
     <View style={styles.item}>
     <View style={styles.fitler}>
       <TouchableOpacity onPress={ clickRemove } style={{ marginLeft:10 }}>
-        <Ionicons name="remove-circle" size={32} color={color} />
+        <MaterialCommunityIcons name="star-remove" size={30} color={color} />
       </TouchableOpacity>  
     </View>
     <View style={styles.name}><Text>{item.name}</Text></View>
-    <View style={styles.date_body}><Text>{item.date}</Text><Text>{item.time}</Text></View>
+    { (mode == 0 || mode == 1) && <View style={styles.date_body}>
+      <Text>{item.date}</Text><Text>{item.time}</Text> 
+    </View>
+    }
+    { (mode == 2 || mode == 3) && <View style={styles.date_body}>
+      <Text>{item.sort_time_txt}</Text>
+    </View>
+    }
   </View>
   )
 };     
+

@@ -1,18 +1,38 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { StyleSheet,Image  } from 'react-native';
+import { StyleSheet,Image,TouchableOpacity,ImageBackground  } from 'react-native';
+import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import DefaultImage from '../assets/header.png';
 export const Header = props => {
+  
+  const navigation = useNavigation();
+  const clickPlus = ()=>{
+    console.log("navigate plus")
+    navigation.navigate("Plus")
+  }
+  const fontWeightTitle = props.title !== 'Refrigerator' ? 40 : 30;
+  const isDisplayBtn = props.title === 'Foods';
+  const HEADER_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
+  const image = { uri: HEADER_IMAGE };
   return (
     <View style={styles.header}>
+      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         <View style={styles.container}>
+          
           <Image
                 style={styles.logo}
                 source={{uri:source_img}}
               />
-          <Text style={styles.title}>TALU</Text>
+          <Text style={{...styles.title,"fontSize":fontWeightTitle}} >{props.title}</Text>
           <View style={styles.display}>
+            { isDisplayBtn && <TouchableOpacity style={styles.button} onPress={ clickPlus }>
+              <Text style={styles.btn_text}>Plus <MaterialCommunityIcons name="plus-circle" size={15} color="#388E3C" /></Text>
+            </TouchableOpacity>}
           </View>
+          
         </View>
+      </ImageBackground>
     </View>
   );
   
@@ -23,20 +43,20 @@ const styles = StyleSheet.create({
     // marginTop:16,
     // backgroundColor:"#E0E0E0",
     flexDirection:"row",
-    borderBottomWidth:1,
-    borderColor: "#BDBDBD",
-    borderRadius: 4,
-    width:"95%"
+    width:"100%"
   },
   title: {
     flex:3,
     // backgroundColor: "#61dafb",
     color: "#20232a",
     textAlign: "center",
-    fontSize: 40,
     fontWeight: "bold",
     marginLeft:16,
     marginRight:16,
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center"
   },
   logo:{
     flex:1,
@@ -47,6 +67,18 @@ const styles = StyleSheet.create({
     flex:1,
     alignItems: 'center',
     justifyContent: 'center',
+    // backgroundColor:"red"
+  },
+  button:{
+    borderColor:'green',
+    borderWidth:1,
+    borderRadius:2,
+    paddingVertical:1,
+    paddingHorizontal:3,
+  },
+  btn_text:{
+    color:"green",
+    fontWeight:"bold"
   },
   header:{
     flex:1,

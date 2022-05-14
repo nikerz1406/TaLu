@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,19 +8,19 @@ import {
 import { Header } from "../layout/header";
 import { Qr } from "../views/qr";
 import { Lists } from "../views/lists";
-import { Record } from "../views/record";
+import { Plus } from "../views/plus";
 import { Refrige } from '../views/refrigerator';
 
 export const Template = (props) => {
-  
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header/>
+      <Header title={props.screen}/>
       <View style={styles.screen}>
-        {props.screen == 'qrcode' && <Qr/> }
-        {props.screen == 'audio' && <Record/>}
-        {props.screen == 'foods' && <Lists/>}
-        {props.screen == 'refrige' && <Refrige/>}
+        {props.screen == 'Qrcode' && <Qr/> }
+        {props.screen == 'Plus' && <Plus/>}
+        {props.screen == 'Foods' && <Lists/>}
+        {props.screen == 'Refrigerator' && <Refrige/>}
       </View>
     </SafeAreaView>
   )

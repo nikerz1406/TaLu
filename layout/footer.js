@@ -24,8 +24,26 @@ export const Tabs = props => {
           ),
         }}
       >
-        {props=><Template screen="foods" />}
+        {props=><Template screen="Foods" />}
       </Tab.Screen>
+      <Tab.Screen
+        name="Plus"
+        options={{
+          tabBarLabel: 'Plus',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="basket-plus-outline" color={color} size={24} />
+          ),
+        }}
+      >{props=><Template screen="Plus" />}</Tab.Screen>
+      <Tab.Screen
+        name="Recycle"
+        options={{
+          tabBarLabel: 'Recycle',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="beaker-remove-outline" color={color} size={20} />
+          ),
+        }}
+      >{props=><Template screen="Recycle" />}</Tab.Screen>
       <Tab.Screen
         name="Qr"
         options={{
@@ -36,7 +54,7 @@ export const Tabs = props => {
           ),
         }}
       >
-        {props=><Template screen="qrcode" />}
+        {props=><Template screen="Qrcode" />}
       </Tab.Screen>
       <Tab.Screen
         name="Refrigerator"
@@ -46,16 +64,8 @@ export const Tabs = props => {
             <MaterialCommunityIcons name="texture-box" color={color} size={24} />
           ),
         }}
-      >{props=><Template screen="refrige" />}</Tab.Screen>
-      <Tab.Screen
-        name="Audio"
-        options={{
-          tabBarLabel: 'Audio',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="text-to-speech" color={color} size={24} />
-          ),
-        }}
-      >{props=><Template screen="audio" />}</Tab.Screen>
+      >{props=><Template screen="Refrigerator" />}</Tab.Screen>
+    
     </Tab.Navigator>
   )
     

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View,Text } from 'react-native';
-export const Record = () => {
+export const Plus = () => {
   const [visible, setVisible] = React.useState(false);
 
   const showModal = () => setVisible(true);
