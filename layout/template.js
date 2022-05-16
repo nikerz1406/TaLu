@@ -9,6 +9,7 @@ import { Header } from "../layout/header";
 import { Qr } from "../views/qr";
 import { Lists } from "../views/lists";
 import { Plus } from "../views/plus";
+import { Recycle } from "../views/recycle";
 import { Refrige } from '../views/refrigerator';
 
 export const Template = (props) => {
@@ -20,6 +21,7 @@ export const Template = (props) => {
         {props.screen == 'Qrcode' && <Qr/> }
         {props.screen == 'Plus' && <Plus/>}
         {props.screen == 'Foods' && <Lists/>}
+        {props.screen == 'Recycle' && <Recycle/>}
         {props.screen == 'Refrigerator' && <Refrige/>}
       </View>
     </SafeAreaView>

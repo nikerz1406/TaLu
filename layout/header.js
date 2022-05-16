@@ -11,7 +11,6 @@ export const Header = props => {
     console.log("navigate plus")
     navigation.navigate("Plus")
   }
-  const fontWeightTitle = props.title !== 'Refrigerator' ? 40 : 30;
   const isDisplayBtn = props.title === 'Foods';
   const HEADER_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
   const image = { uri: HEADER_IMAGE };
@@ -24,7 +23,7 @@ export const Header = props => {
                 style={styles.logo}
                 source={{uri:source_img}}
               />
-          <Text style={{...styles.title,"fontSize":fontWeightTitle}} >{props.title}</Text>
+          <Text style={styles.title} >{props.title}</Text>
           <View style={styles.display}>
             { isDisplayBtn && <TouchableOpacity style={styles.button} onPress={ clickPlus }>
               <Text style={styles.btn_text}>Plus <MaterialCommunityIcons name="plus-circle" size={15} color="#388E3C" /></Text>
@@ -48,11 +47,12 @@ const styles = StyleSheet.create({
   title: {
     flex:3,
     // backgroundColor: "#61dafb",
-    color: "#20232a",
+    color: "#424242",
     textAlign: "center",
     fontWeight: "bold",
     marginLeft:16,
     marginRight:16,
+    fontSize:30
   },
   image: {
     flex: 1,

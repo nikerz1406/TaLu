@@ -1,23 +1,25 @@
-import React,{ useEffect, useState } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import React,{ useEffect, useState,useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter")
   dispatch({type:"FILTER_TYPE"});
-  dispatch({type:"SORT_TYPE",filterType:mode});
+  dispatch({type:"SORT_RECYCLE_TYPE",filterType:mode});
 
   var color = mode == 0 ? "#EF5350" : mode == 1 ? "#FDD835" : "#66BB6A";
   filterIcon({type:color})
 
   flatListRef.scrollToOffset({ animated: true, offset: 0 });
 }
+
 const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter name")
 
   dispatch({type:"FILTER_NAME"});
-  dispatch({type:"SORT_NAME",filterName:mode});
+  dispatch({type:"SORT_RECYCLE_NAME",filterName:mode});
 
   var icon = mode ? 'arrow-down' : 'arrow-up';
   filterIcon({name:icon})
@@ -27,38 +29,20 @@ const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
 const clickDate = (dispatch,mode,filterIcon)=>{
   console.log("click date")
   dispatch({type:"FILTER_DATE"});
-  dispatch({type:"SORT_DATE",filterDate:mode});
+  dispatch({type:"SORT_RECYCLE_DATE",filterDate:mode});
 
   var icon = mode ? 'calendar-text' : 'calendar-week';
   filterIcon({date:icon})
 
 }
 
-const onEnd = (dispatch) => {
-  var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
-  var today  = new Date();
-  var type = Math.floor(Math.random() * 3);
-  var item = {
-    id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
-    name:id
-  }
-  
-  // var new_data = [...listFoods,item];
-  dispatch({
-    type:"RELOAD_FOODS",payload:item
-  });
-
-  console.log("end scroll")
-
-}
-
-export const Lists = () => {
+export const Recycle = () => {
+  const dispatch = useDispatch();
+  const [colorFilterType,setColorFilterType] = useState('#424242');
   const [isFetching, setIsFetching] = useState(false);
-  const listFoods = useSelector((state) => state.foods);
   const filterFoods = useSelector((state) => state.filterFoods);
   var flatListRef = null;
   const [iconFilterName,setIconFilterName] = useState('md-search-outline');
-  const [colorFilterType,setColorFilterType] = useState('#424242');
   const [iconFilterDate,setIconFilterDate] = useState('text-search');
 
   const filterIcon = function({ 
@@ -72,18 +56,16 @@ export const Lists = () => {
     setIconFilterDate(date)
   }
 
-  const dispatch = useDispatch();
-  
-  const fetchData = () => {
-    // dispatch(getAllTopicAction(userParamData));
-    setIsFetching(false);
-  };
-  
-  const onRefresh = () => {
-    console.log("refresh")
-    setIsFetching(true);
-    fetchData();
-  };
+  const history = useSelector((state)=>state.history)
+  // console.log({history1:history})
+  // dispatch({type:'BADGE',module:'RECYCLE',command:'remove'})
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = dispatch({type:"BADGE",module:'RECYCLE',command:'remove'})
+      return () => unsubscribe;
+    }, [history])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -109,20 +91,19 @@ export const Lists = () => {
         style={{ 
           // backgroundColor:"red",
           width:"100%"}}
-        data={listFoods}
+        data={history}
         renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
         ref={(ref) => { flatListRef = ref; }}
         keyExtractor={item => item.id}
-        onEndReachedThreshold={0.9}
-        onEndReached={()=>onEnd(dispatch)}
+        onEndReachedThreshold={0.5}
+        // onEndReached={()=>onEnd(dispatch)}
         ListEmptyComponent={<Empty/>}
         progressViewOffset={100}
-        onRefresh={onRefresh}
         refreshing={isFetching}
       />
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -166,17 +147,19 @@ const renderItem = ({ item,dispatch,mode }) => {
 
   const color = item.type == 0 ? "#EF5350" : item.type == 1 ? "#FDD835" : "#66BB6A";
   // const dispatch = useDispatch();
-  const clickRemove = ()=>{
-    console.log("click remove")
-    dispatch({type:"REMOVE_FOOD",id:item.id})
-    dispatch({type:"ADD_RECYCLE",item:item})
-    dispatch({type:"BADGE",module:'RECYCLE',command:'add'})
+
+  const clickUndo = ()=>{
+    console.log("click undo")
+    // dispatch({type:"REMOVE_FOOD",id:item.id})
+    dispatch({type:"UNDO_RECYCLE",id:item.id})
+    dispatch({type:"BADGE",module:'RECYCLE',command:'remove'})
+    dispatch({type:"ADD_FOOD",item})
   }
   return(
     <View style={styles.item}>
     <View style={styles.fitler}>
-      <TouchableOpacity onPress={ clickRemove } style={{ marginLeft:10 }}>
-        <MaterialCommunityIcons name="star-remove" size={30} color={color} />
+      <TouchableOpacity onPress={ clickUndo } style={{ marginLeft:10 }}>
+        <MaterialCommunityIcons name="undo-variant" size={30} color={color} />
       </TouchableOpacity>  
     </View>
     <View style={styles.name}><Text>{item.name}</Text></View>
@@ -190,5 +173,4 @@ const renderItem = ({ item,dispatch,mode }) => {
     }
   </View>
   )
-};     
-
+};   
