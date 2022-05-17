@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button ,TouchableOpacity,TextInput} from 'react-native';
+import { Text, View, StyleSheet, Button ,TouchableOpacity,TextInput,Dimensions} from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { MaterialCommunityIcons,Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
+
 
 
 const openScan = (setScanned,setIsRegisted,dispatch)=>{
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
   },
   qrcode:{
     flex: 3,
-    width:"100%",
     // backgroundColor:"#5c6773",
     alignContent:"center",
     alignItems:"center",

@@ -14,7 +14,7 @@ export const Tabs = props => {
   const badgeRefrigerator = useSelector((state) => state.badge.refrigerator);
   return (
       <Tab.Navigator
-        initialRouteName="Lists"
+        initialRouteName="Plus"
         barStyle={{ backgroundColor: '#c8bfe7',color:"white" }}
         activeColor="#424242"
         inactiveColor="#EFEBE9"
