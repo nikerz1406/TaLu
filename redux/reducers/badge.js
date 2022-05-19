@@ -40,11 +40,21 @@ const badge = {
 }
 badge.RECYCLE.add = function(state){
 
-    state.remove = state.remove ? state.remove+1 : 1;
+    state.remove = state.remove != null ? state.remove+1 : 1;
     return state;
 }
 badge.RECYCLE.remove = function(state){
     state.remove = null;
+    return state;
+}
+badge.FOODS.add = function(state){
+    
+    state.foods = state.foods != null ? state.foods+1 : 1;
+    console.log({state})
+    return state;
+}
+badge.FOODS.remove = function(state){
+    state.foods = null;
     return state;
 }
 export default badgeReducer;

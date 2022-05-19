@@ -1,5 +1,5 @@
 import React,{ useEffect, useState } from 'react';
-import { SafeAreaView, View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -35,18 +35,18 @@ const clickDate = (dispatch,mode,filterIcon)=>{
 }
 
 const onEnd = (dispatch) => {
-  var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
-  var today  = new Date();
-  var type = Math.floor(Math.random() * 3);
-  var item = {
-    id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
-    name:id
-  }
+  // var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
+  // var today  = new Date();
+  // var type = Math.floor(Math.random() * 3);
+  // var item = {
+  //   id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
+  //   name:id
+  // }
   
-  // var new_data = [...listFoods,item];
-  dispatch({
-    type:"RELOAD_FOODS",payload:item
-  });
+  // // var new_data = [...listFoods,item];
+  // dispatch({
+  //   type:"RELOAD_FOODS",payload:item
+  // });
 
   console.log("end scroll")
 
@@ -86,7 +86,7 @@ export const Lists = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.head_table}>
         <View style={styles.fitler}>
           <TouchableOpacity onPress={ ()=>clickFilter(dispatch,flatListRef,filterFoods.type,filterIcon) }>
@@ -120,7 +120,7 @@ export const Lists = () => {
         onRefresh={onRefresh}
         refreshing={isFetching}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -171,6 +171,7 @@ const renderItem = ({ item,dispatch,mode }) => {
     dispatch({type:"REMOVE_FOOD",id:item.id})
     dispatch({type:"ADD_RECYCLE",item:item})
     dispatch({type:"BADGE",module:'RECYCLE',command:'add'})
+    dispatch({type:"BADGE",module:'FOODS',command:'remove'})
   }
   return(
     <View style={styles.item}>

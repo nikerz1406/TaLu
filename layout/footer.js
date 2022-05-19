@@ -8,10 +8,9 @@ const Tab = createMaterialBottomTabNavigator();
 
 export const Tabs = props => {
   const badgeFoods = useSelector((state) => state.badge.foods);
+  const badgePlus = useSelector((state) => state.badge.add);
   const badgeRemove = useSelector((state) => state.badge.remove);
-  const badgeAdd = useSelector((state) => state.badge.add);
-  const badgeQr = useSelector((state) => state.badge.qr);
-  const badgeRefrigerator = useSelector((state) => state.badge.refrigerator);
+
   return (
       <Tab.Navigator
         initialRouteName="Plus"
@@ -24,8 +23,6 @@ export const Tabs = props => {
       >
         <Tab.Screen
           name="Foods"
-          
-          
           options={{
             tabBarLabel: 'Foods',
             tabBarBadge:badgeFoods,
@@ -41,7 +38,7 @@ export const Tabs = props => {
           
           options={{
             tabBarLabel: 'Plus',
-            tabBarBadge:badgeAdd,
+            tabBarBadge:badgePlus,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="basket-plus-outline" color={color} size={24} />
             ),
@@ -64,7 +61,7 @@ export const Tabs = props => {
           options={{
             tabBarLabel: 'Qr',
             tabBarVisible:"true",
-            tabBarBadge:badgeQr,
+            tabBarBadge:null,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="qrcode" color={color} size={24} />
             ),
@@ -77,7 +74,7 @@ export const Tabs = props => {
           
           options={{
             tabBarLabel: 'Refrigerator',
-            tabBarBadge:badgeRefrigerator,
+            tabBarBadge:null,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="texture-box" color={color} size={24} />
             ),

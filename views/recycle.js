@@ -1,4 +1,4 @@
-import { SafeAreaView, View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
 import React,{ useEffect, useState,useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
@@ -68,7 +68,7 @@ export const Recycle = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.head_table}>
         <View style={styles.fitler}>
           <TouchableOpacity onPress={ ()=>clickFilter(dispatch,flatListRef,filterFoods.type,filterIcon) }>
@@ -101,7 +101,7 @@ export const Recycle = () => {
         progressViewOffset={100}
         refreshing={isFetching}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -153,6 +153,7 @@ const renderItem = ({ item,dispatch,mode }) => {
     // dispatch({type:"REMOVE_FOOD",id:item.id})
     dispatch({type:"UNDO_RECYCLE",id:item.id})
     dispatch({type:"BADGE",module:'RECYCLE',command:'remove'})
+    dispatch({type:"BADGE",module:'FOODS',command:'add'})
     dispatch({type:"ADD_FOOD",item})
   }
   return(

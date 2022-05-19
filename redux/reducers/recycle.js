@@ -1,4 +1,5 @@
 import filter from '../../utilities/filter';
+// import { initData } from '../../utilities/test';
 
 const initalState = [];
 const recycleReducer = (state = initalState,action)=>{
@@ -31,7 +32,7 @@ recycle.undo = (data,action) =>{
       });
 }
 recycle.add = (data,item) =>{
-    data.push(item);
+    data.unshift(item);
     return data;
 }
 recycle.clear = () =>{

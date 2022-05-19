@@ -1,21 +1,7 @@
 import filter from '../../utilities/filter';
-function initData(number){
-    
-    var result = []
-    for(var i=0;i<number;i++){
-        var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
-        var value = Math.floor(Math.random() * 60*60*24*365);
-        var today  = new Date(value);
-        var type = Math.floor(Math.random() * 3);
-        var item = {
-        id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
-        name:id,
-        }
-        result.push(item);
-    }
-    return result;
-}
-const initalState = initData(2);
+// import { initData } from '../../utilities/test';
+// const initalState = initData(2);
+const initalState = [];
 const foodsReducer = (state = initalState,action)=>{
     switch (action.type) {
         case "RELOAD_FOODS":            
@@ -41,7 +27,12 @@ const foods = {
     remove:null
 }
 foods.add = (state,item)=>{
-    state.push(item);
+    if(state.item == undefined){
+        state.item = [item];
+        return state;
+    }
+        
+    state.unshift(item);
     return state;
 }
 foods.reload = (state,data)=>{

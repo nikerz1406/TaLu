@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { StyleSheet,Image,TouchableOpacity,ImageBackground  } from 'react-native';
-import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons,MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DefaultImage from '../assets/header.png';
 export const Header = props => {
@@ -11,7 +11,12 @@ export const Header = props => {
     console.log("navigate plus")
     navigation.navigate("Plus")
   }
-  const isDisplayBtn = props.title === 'Foods';
+  const isDisplayBtnFoods = props.title === 'Foods';
+  const isDisplayBtnPlus = props.title === 'Plus';
+  const clickVoice = ()=>{
+    console.log("click voice")
+  }
+
   const HEADER_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
   const image = { uri: HEADER_IMAGE };
   return (
@@ -25,9 +30,14 @@ export const Header = props => {
               />
           <Text style={styles.title} >{props.title}</Text>
           <View style={styles.display}>
-            { isDisplayBtn && <TouchableOpacity style={styles.button} onPress={ clickPlus }>
+            { isDisplayBtnFoods && <TouchableOpacity style={styles.button} onPress={ clickPlus }>
               <Text style={styles.btn_text}>Plus <MaterialCommunityIcons name="plus-circle" size={15} color="#388E3C" /></Text>
-            </TouchableOpacity>}
+            </TouchableOpacity> }
+            { isDisplayBtnPlus && <TouchableOpacity style={styles.voice} onPress={ clickVoice } >
+                <MaterialIcons style={{ textAlign: 'center',color:"#1976D2" }} name="keyboard-voice" size={23} />
+              <Text style={{ textAlign: 'center',color:"#1976D2",fontSize:10}} >Voice</Text>
+            </TouchableOpacity>
+            }
           </View>
           
         </View>
@@ -79,6 +89,14 @@ const styles = StyleSheet.create({
   btn_text:{
     color:"green",
     fontWeight:"bold"
+  },
+  voice:{
+    borderColor:"#1976D2",
+    borderWidth:2,
+    borderRadius:50,
+    width:48,
+    height:49,
+    padding:2,
   },
   header:{
     flex:1,
