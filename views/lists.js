@@ -1,7 +1,10 @@
 import React,{ useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text,TouchableOpacity,Button } from 'react-native';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
+import { filterEvent } from '../redux/Reducers/filtersSlice';
+
+
 
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter")
@@ -16,8 +19,8 @@ const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
 const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter name")
 
-  dispatch({type:"FILTER_NAME"});
-  dispatch({type:"SORT_NAME",filterName:mode});
+  // dispatch({type:"SORT_NAME",filterName:mode});
+  dispatch(filterEvent({type:"FILTER_NAME"}));
 
   var icon = mode ? 'arrow-down' : 'arrow-up';
   filterIcon({name:icon})
@@ -60,6 +63,7 @@ export const Lists = () => {
   const [iconFilterName,setIconFilterName] = useState('md-search-outline');
   const [colorFilterType,setColorFilterType] = useState('#424242');
   const [iconFilterDate,setIconFilterDate] = useState('text-search');
+  const dispatch = useDispatch();
 
   const filterIcon = function({ 
     // default value
@@ -72,7 +76,6 @@ export const Lists = () => {
     setIconFilterDate(date)
   }
 
-  const dispatch = useDispatch();
   
   const fetchData = () => {
     // dispatch(getAllTopicAction(userParamData));
@@ -104,7 +107,6 @@ export const Lists = () => {
           </TouchableOpacity>
         </View>
       </View>
-      
       <FlatList
         style={{ 
           // backgroundColor:"red",

@@ -13,7 +13,7 @@ export const Tabs = props => {
 
   return (
       <Tab.Navigator
-        initialRouteName="Plus"
+        initialRouteName="Foods"
         barStyle={{ backgroundColor: '#c8bfe7',color:"white" }}
         activeColor="#424242"
         inactiveColor="#EFEBE9"

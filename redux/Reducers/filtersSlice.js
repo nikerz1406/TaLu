@@ -1,10 +1,15 @@
-const initalFilter = {
+import { createSlice } from '@reduxjs/toolkit'
+
+export const filterSlice = createSlice({
+  name: 'filter',
+  initialState: {
     type:0, // 0|1|2 == meat|vegetable|starch
     name:0, // 0|1 == des|asc
     date:0, // 0|1|2|3 == des full date| asc full date | des time | asc time
-}
-const filterReducer = (state = initalFilter,action)=>{
-    switch (action.type) {
+  },
+  reducers: {
+    filterEvent: (state,action) => {
+      switch (action.type) {
         case "FILTER_TYPE":
             state.type = state.type == 2 ?  0  : state.type + 1;
             return state;
@@ -17,8 +22,12 @@ const filterReducer = (state = initalFilter,action)=>{
             return state;
         default:
             return state;
-
+      }
     }
-}
+  }
+})
 
-export default filterReducer;
+// Action creators are generated for each case reducer function
+export const { filterEvent } = filterSlice.actions
+
+export default filterSlice.reducer
