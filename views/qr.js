@@ -5,12 +5,12 @@ import { MaterialCommunityIcons,Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 
-
+import  { refrigetatorReducers } from '../redux/Reducers/refrigetatorSlice';
 
 const openScan = (setScanned,setIsRegisted,dispatch)=>{
   setScanned(false);
   setIsRegisted(null);
-  dispatch({type:"ADD_REFRIGETATOR",value:"Waitting scanner"})
+  dispatch(refrigetatorReducers({type:"ADD_REFRIGETATOR",value:"Waitting scanner"}))
 }
 export const Qr = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -49,7 +49,7 @@ export const Qr = (props) => {
     // connect server, valid refrigetator
     setIsRegisted(true);
 
-    dispatch({type:'ADD_REFRIGETATOR',value:data})
+    dispatch(refrigetatorReducers({type:'ADD_REFRIGETATOR',value:data}))
   };
 
   if (hasPermission === null) {

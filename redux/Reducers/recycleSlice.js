@@ -1,23 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+import filter from '../../utilities/filter';
 
 export const recycleSlice = createSlice({
   name: 'recycle',
   initialState: [],
   reducers: {
-    recycleEvent: (state,action) => {
-      switch (action.type) {
+    recycleReducers: (state,action) => {
+      switch (action.payload.type) {
           case 'UNDO_RECYCLE':
-              return recycle.undo(state,action); 
+              return recycle.undo(state,action.payload); 
           case 'ADD_RECYCLE':
-              return recycle.add(state,action.item); 
+              return recycle.add(state,action.payload.item); 
           case 'CLEAR_RECYCLE':
               return recycle.clear(); 
           case "SORT_RECYCLE_TYPE":
-              return filter.type.event(state,action.filterType);
+              return filter.type.event(state,action.payload.filterType);
           case "SORT_RECYCLE_NAME":
-              return filter.name.event(state,action.filterName);
+              return filter.name.event(state,action.payload.filterName);
           case "SORT_RECYCLE_DATE":
-              return filter.date.event(state,action.filterDate);
+              return filter.date.event(state,action.payload.filterDate);
           default:
               return state;
       }
@@ -26,7 +27,7 @@ export const recycleSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { recycleEvent } = recycleSlice.actions
+export const { recycleReducers } = recycleSlice.actions
 
 export default recycleSlice.reducer
 

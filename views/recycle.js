@@ -4,10 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
+import { foodsReducers } from '../redux/Reducers/foodsSlice';
+import { filterReducers } from '../redux/Reducers/filtersSlice';
+import { badgeReducers } from '../redux/Reducers/badgeSlice';
+import  { recycleReducers } from '../redux/Reducers/recycleSlice';
+
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter")
-  dispatch({type:"FILTER_TYPE"});
-  dispatch({type:"SORT_RECYCLE_TYPE",filterType:mode});
+  dispatch(filterReducers({type:"FILTER_TYPE"}));
+  dispatch(recycleReducers({type:"SORT_RECYCLE_TYPE",filterType:mode}));
 
   var color = mode == 0 ? "#EF5350" : mode == 1 ? "#FDD835" : "#66BB6A";
   filterIcon({type:color})
@@ -18,8 +23,8 @@ const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
 const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter name")
 
-  dispatch({type:"FILTER_NAME"});
-  dispatch({type:"SORT_RECYCLE_NAME",filterName:mode});
+  dispatch(filterReducers({type:"FILTER_NAME"}));
+  dispatch(recycleReducers({type:"SORT_RECYCLE_NAME",filterName:mode}));
 
   var icon = mode ? 'arrow-down' : 'arrow-up';
   filterIcon({name:icon})
@@ -28,8 +33,8 @@ const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
 }
 const clickDate = (dispatch,mode,filterIcon)=>{
   console.log("click date")
-  dispatch({type:"FILTER_DATE"});
-  dispatch({type:"SORT_RECYCLE_DATE",filterDate:mode});
+  dispatch(filterReducers({type:"FILTER_DATE"}));
+  dispatch(recycleReducers({type:"SORT_RECYCLE_DATE",filterDate:mode}));
 
   var icon = mode ? 'calendar-text' : 'calendar-week';
   filterIcon({date:icon})
@@ -62,7 +67,7 @@ export const Recycle = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const unsubscribe = dispatch({type:"BADGE",module:'RECYCLE',command:'remove'})
+      const unsubscribe = dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
       return () => unsubscribe;
     }, [history])
   );
@@ -151,10 +156,11 @@ const renderItem = ({ item,dispatch,mode }) => {
   const clickUndo = ()=>{
     console.log("click undo")
     // dispatch({type:"REMOVE_FOOD",id:item.id})
-    dispatch({type:"UNDO_RECYCLE",id:item.id})
-    dispatch({type:"BADGE",module:'RECYCLE',command:'remove'})
-    dispatch({type:"BADGE",module:'FOODS',command:'add'})
-    dispatch({type:"ADD_FOOD",item})
+
+    dispatch(recycleReducers({type:"UNDO_RECYCLE",id:item.id}))
+    dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
+    dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'add'}))
+    dispatch(foodsReducers({type:"ADD_FOOD",item}))
   }
   return(
     <View style={styles.item}>

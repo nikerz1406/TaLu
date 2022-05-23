@@ -1,15 +1,19 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ useEffect, useState,useCallback } from 'react';
 import { View, FlatList, StyleSheet, Text,TouchableOpacity,Button } from 'react-native';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { filterEvent } from '../redux/Reducers/filtersSlice';
+import { useFocusEffect } from '@react-navigation/native';
+import { filterReducers } from '../redux/Reducers/filtersSlice';
+import { foodsReducers } from '../redux/Reducers/foodsSlice';
+import  { recycleReducers } from '../redux/Reducers/recycleSlice';
+import { badgeReducers } from '../redux/Reducers/badgeSlice';
 
 
 
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter")
-  dispatch({type:"FILTER_TYPE"});
-  dispatch({type:"SORT_TYPE",filterType:mode});
+  dispatch(filterReducers({type:"FILTER_TYPE"}));
+  dispatch(foodsReducers({type:"SORT_TYPE",filterType:mode}));
 
   var color = mode == 0 ? "#EF5350" : mode == 1 ? "#FDD835" : "#66BB6A";
   filterIcon({type:color})
@@ -19,8 +23,8 @@ const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
 const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter name")
 
-  // dispatch({type:"SORT_NAME",filterName:mode});
-  dispatch(filterEvent({type:"FILTER_NAME"}));
+  dispatch(foodsReducers({type:"SORT_NAME",filterName:mode}));
+  dispatch(filterReducers({type:"FILTER_NAME"}));
 
   var icon = mode ? 'arrow-down' : 'arrow-up';
   filterIcon({name:icon})
@@ -29,8 +33,8 @@ const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
 }
 const clickDate = (dispatch,mode,filterIcon)=>{
   console.log("click date")
-  dispatch({type:"FILTER_DATE"});
-  dispatch({type:"SORT_DATE",filterDate:mode});
+  dispatch(filterReducers({type:"FILTER_DATE"}));
+  dispatch(foodsReducers({type:"SORT_DATE",filterDate:mode}));
 
   var icon = mode ? 'calendar-text' : 'calendar-week';
   filterIcon({date:icon})
@@ -75,6 +79,13 @@ export const Lists = () => {
     setIconFilterName(name)
     setIconFilterDate(date)
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribeFoods = dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
+      return () => unsubscribeFoods;
+    }, [listFoods])
+  );
 
   
   const fetchData = () => {
@@ -170,10 +181,10 @@ const renderItem = ({ item,dispatch,mode }) => {
   // const dispatch = useDispatch();
   const clickRemove = ()=>{
     console.log("click remove")
-    dispatch({type:"REMOVE_FOOD",id:item.id})
-    dispatch({type:"ADD_RECYCLE",item:item})
-    dispatch({type:"BADGE",module:'RECYCLE',command:'add'})
-    dispatch({type:"BADGE",module:'FOODS',command:'remove'})
+    dispatch(foodsReducers({type:"REMOVE_FOOD",id:item.id}))
+    dispatch(recycleReducers({type:"ADD_RECYCLE",item:item}))
+    dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'add'}))
+    dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
   }
   return(
     <View style={styles.item}>

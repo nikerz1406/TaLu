@@ -1,26 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
-
-// import { initData } from '../../utilities/test';
+import { initData } from '../../utilities/test';
+import filter from '../../utilities/filter';
 // const initalState = initData(2);
 
 export const foodsSlice = createSlice({
   name: 'foods',
-  initialState: [],
+  initialState: initData(5),
   reducers: {
-    foodsEvent: (state,action) => {
-      switch (action.type) {
+    foodsReducers: (state,action) => {
+      switch (action.payload.type) {
           case "RELOAD_FOODS":            
               return foods.reload(state,action.payload)
           case "REMOVE_FOOD":
-            return foods.remove(state,action.id);
+            return foods.remove(state,action.payload.id);
           case "ADD_FOOD":
-              return foods.add(state,action.item);
+            
+              return foods.add(state,action.payload.item);
           case "SORT_TYPE":
-              return filter.type.event(state,action.filterType);
+              return filter.type.event(state,action.payload.filterType);
           case "SORT_NAME":
-              return filter.name.event(state,action.filterName);
+              return filter.name.event(state,action.payload.filterName);
           case "SORT_DATE":
-              return filter.date.event(state,action.filterDate);
+              return filter.date.event(state,action.payload.filterDate);
           default:
               return state;
       }
@@ -29,7 +30,7 @@ export const foodsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { foodsEvent } = foodsSlice.actions
+export const { foodsReducers } = foodsSlice.actions
 
 export default foodsSlice.reducer
 
@@ -39,11 +40,7 @@ const foods = {
   remove:null
 }
 foods.add = (state,item)=>{
-  if(state.item == undefined){
-      state.item = [item];
-      return state;
-  }
-      
+   
   state.unshift(item);
   return state;
 }

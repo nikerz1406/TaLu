@@ -4,10 +4,10 @@ export const refrigetatorSlice = createSlice({
   name: 'refrigetator',
   initialState: ['No ID'],
   reducers: {
-    refrigetatorEvent: (state,action) => {
-      switch (action.type) {
+    refrigetatorReducers: (state,action) => {
+      switch (action.payload.type) {
         case "ADD_REFRIGETATOR":
-            return action.value;
+            return action.payload.value;
         case "LOADING_REFRIGETATOR":
             return 'loading...';
         default:
@@ -18,6 +18,6 @@ export const refrigetatorSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { refrigetatorEvent } = refrigetatorSlice.actions
+export const { refrigetatorReducers } = refrigetatorSlice.actions
 
 export default refrigetatorSlice.reducer

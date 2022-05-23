@@ -10,10 +10,10 @@ export const badgeSlice = createSlice({
     'refrigerator':null
   },
   reducers: {
-    badgeEvent: (state,action) => {
-      switch (action.type) {
+    badgeReducers: (state,action) => {
+      switch (action.payload.type) {
         case 'BADGE':
-            return badge[action.module][action.command](state);
+            return badge[action.payload.module][action.payload.command](state);
         default:
             // console.log("dont have "+action.type+" action in Badge case or type");
             return state;
@@ -23,7 +23,7 @@ export const badgeSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { badgeEvent } = badgeSlice.actions
+export const { badgeReducers } = badgeSlice.actions
 
 export default badgeSlice.reducer
 
@@ -61,7 +61,6 @@ badge.RECYCLE.remove = function(state){
 badge.FOODS.add = function(state){
   
   state.foods = state.foods != null ? state.foods+1 : 1;
-  console.log({state})
   return state;
 }
 badge.FOODS.remove = function(state){

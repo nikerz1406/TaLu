@@ -8,8 +8,8 @@ export const filterSlice = createSlice({
     date:0, // 0|1|2|3 == des full date| asc full date | des time | asc time
   },
   reducers: {
-    filterEvent: (state,action) => {
-      switch (action.type) {
+    filterReducers: (state,action) => {
+      switch (action.payload.type) {
         case "FILTER_TYPE":
             state.type = state.type == 2 ?  0  : state.type + 1;
             return state;
@@ -28,6 +28,6 @@ export const filterSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { filterEvent } = filterSlice.actions
+export const { filterReducers } = filterSlice.actions
 
 export default filterSlice.reducer

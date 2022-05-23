@@ -2,6 +2,10 @@ import React,{ useState } from 'react';
 import { TouchableOpacity,SafeAreaView,View,Text,StyleSheet,TextInput,Keyboard  } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { foodsReducers } from '../redux/Reducers/foodsSlice';
+import { badgeReducers } from '../redux/Reducers/badgeSlice';
+
+
 const clickMark = (checkMark,id) =>{
   switch (id) {
     case 0:
@@ -22,8 +26,8 @@ const clickOK = (dispatch,text,checkMark,setText,setIsCommit,meat,vegetable) =>{
 
   if(text == null || text != false){
     var item = initData(type,text);
-    dispatch({type:"BADGE",module:'FOODS',command:'add'})
-    dispatch({type:'ADD_FOOD',item});
+    dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'add'}))
+    dispatch(foodsReducers({type:'ADD_FOOD',item}));
     
   }
 
