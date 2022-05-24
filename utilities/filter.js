@@ -46,11 +46,12 @@ filter.date.event = (data,type) =>{
 }
 filter.date.switch.full.desc = (data) =>{
     data = data.slice(0);
+
     return data.sort(function(a,b) {
-        if (Date.parse(a.date +" "+ a.time) < Date.parse(b.date +" "+ b.time)) {
+        if (Date.parse(a.date +"T"+ a.time) < Date.parse(b.date +"T"+ b.time)) {
             return -1;
             }
-        if (Date.parse(a.date +" "+ a.time) > Date.parse(b.date +" "+ b.time)) {
+        if (Date.parse(a.date +"T"+ a.time) > Date.parse(b.date +"T"+ b.time)) {
             return 1;
         }
         return 0;
@@ -60,10 +61,10 @@ filter.date.switch.full.desc = (data) =>{
 filter.date.switch.full.asc = (data) =>{
     data = data.slice(0);
     return data.sort(function(a,b) {
-        if (Date.parse(a.date +" "+ a.time) > Date.parse(b.date +" "+ b.time)) {
+        if (Date.parse(a.date +"T"+ a.time) > Date.parse(b.date +"T"+ b.time)) {
             return -1;
             }
-        if (Date.parse(a.date +" "+ a.time) < Date.parse(b.date +" "+ b.time)) {
+        if (Date.parse(a.date +"T"+ a.time) < Date.parse(b.date +"T"+ b.time)) {
             return 1;
         }
         return 0;
@@ -106,6 +107,7 @@ filter.type.event = (data,type) =>{
     switch (type) {
         case 0:
             // 0=> 1=>2
+            console.log(0)
             return [
                 ...filter.type.method.meat(data),
                 ...filter.type.method.vegetable(data),
@@ -113,6 +115,7 @@ filter.type.event = (data,type) =>{
             ]
             case 1:
                 // 1=>2=>0
+                console.log(1)
                 return [
                     ...filter.type.method.vegetable(data),
                     ...filter.type.method.starch(data),
@@ -120,6 +123,7 @@ filter.type.event = (data,type) =>{
                 ]
         default:
             // 2=>0=>1
+            console.log(2)
             return [
                 ...filter.type.method.starch(data),
                 ...filter.type.method.meat(data),

@@ -1,8 +1,9 @@
 import { View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
-import React,{ useEffect, useState,useCallback } from 'react';
+import React,{ useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+
 
 import { foodsReducers } from '../redux/Reducers/foodsSlice';
 import { filterReducers } from '../redux/Reducers/filtersSlice';
@@ -49,6 +50,8 @@ export const Recycle = () => {
   var flatListRef = null;
   const [iconFilterName,setIconFilterName] = useState('md-search-outline');
   const [iconFilterDate,setIconFilterDate] = useState('text-search');
+  const history = useSelector((state)=>state.history)
+  const navigation = useNavigation();
 
   const filterIcon = function({ 
     // default value
@@ -61,16 +64,19 @@ export const Recycle = () => {
     setIconFilterDate(date)
   }
 
-  const history = useSelector((state)=>state.history)
-  // console.log({history1:history})
-  // dispatch({type:'BADGE',module:'RECYCLE',command:'remove'})
 
-  useFocusEffect(
-    useCallback(() => {
-      const unsubscribe = dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
-      return () => unsubscribe;
-    }, [history])
-  );
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', (e) => {
+      // Prevent default behavior
+      // e.preventDefault();
+
+      // Do something manually
+      dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
+      
+    });
+  
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

@@ -2,12 +2,11 @@ import React,{ useEffect, useState,useCallback } from 'react';
 import { View, FlatList, StyleSheet, Text,TouchableOpacity,Button } from 'react-native';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
 import { filterReducers } from '../redux/Reducers/filtersSlice';
-import { foodsReducers } from '../redux/Reducers/foodsSlice';
+import { foodsReducers,getFoods } from '../redux/Reducers/foodsSlice';
 import  { recycleReducers } from '../redux/Reducers/recycleSlice';
 import { badgeReducers } from '../redux/Reducers/badgeSlice';
-
+import { useNavigation } from '@react-navigation/native';
 
 
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
@@ -41,7 +40,7 @@ const clickDate = (dispatch,mode,filterIcon)=>{
 
 }
 
-const onEnd = (dispatch) => {
+const onEnd = (dispatch,page) => {
   // var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
   // var today  = new Date();
   // var type = Math.floor(Math.random() * 3);
@@ -55,20 +54,27 @@ const onEnd = (dispatch) => {
   //   type:"RELOAD_FOODS",payload:item
   // });
 
+  // get data
+  // var new_page  = page+1;
+  // dispatch(getFoods(new_page));
+
   console.log("end scroll")
 
 }
 
-export const Lists = () => {
+export const FoodLists = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const listFoods = useSelector((state) => state.foods);
+  const listFoods = useSelector((state) => state.foods.data);
   const filterFoods = useSelector((state) => state.filterFoods);
+  const page = useSelector((state) => state.foods.page);
   var flatListRef = null;
   const [iconFilterName,setIconFilterName] = useState('md-search-outline');
   const [colorFilterType,setColorFilterType] = useState('#424242');
   const [iconFilterDate,setIconFilterDate] = useState('text-search');
   const dispatch = useDispatch();
 
+  const navigation = useNavigation();
+  
   const filterIcon = function({ 
     // default value
     name='md-search-outline',
@@ -79,15 +85,30 @@ export const Lists = () => {
     setIconFilterName(name)
     setIconFilterDate(date)
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      const unsubscribeFoods = dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
-      return () => unsubscribeFoods;
-    }, [listFoods])
-  );
-
   
+  useEffect(() => {
+    
+    if(listFoods.length == 0){
+       // get data
+     dispatch(getFoods());
+    }
+    
+  },[])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', (e) => {
+      // Prevent default behavior
+      // e.preventDefault();
+
+    
+
+      // Do something manually
+      dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
+    });
+  
+    return unsubscribe;
+  }, [navigation]);
+
   const fetchData = () => {
     // dispatch(getAllTopicAction(userParamData));
     setIsFetching(false);
@@ -126,7 +147,7 @@ export const Lists = () => {
         renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
         ref={(ref) => { flatListRef = ref; }}
         keyExtractor={item => item.id}
-        onEndReachedThreshold={0.9}
+        onEndReachedThreshold={0.5}
         onEndReached={()=>onEnd(dispatch)}
         ListEmptyComponent={<Empty/>}
         progressViewOffset={100}

@@ -1,11 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { initData } from '../../utilities/test';
+import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
+// import { initData } from '../../utilities/test';
 import filter from '../../utilities/filter';
+import axiosClient from '../../utilities/axiosClient';
+
 // const initalState = initData(2);
+const initialState = {
+  data:[],
+  status:'idle',
+  error:null,
+  page:0,
+}
 
 export const foodsSlice = createSlice({
   name: 'foods',
-  initialState: initData(5),
+  initialState: initialState,
   reducers: {
     foodsReducers: (state,action) => {
       switch (action.payload.type) {
@@ -13,20 +21,41 @@ export const foodsSlice = createSlice({
               return foods.reload(state,action.payload)
           case "REMOVE_FOOD":
             return foods.remove(state,action.payload.id);
-          case "ADD_FOOD":
-            
+          case "ADD_FOOD":            
               return foods.add(state,action.payload.item);
           case "SORT_TYPE":
-              return filter.type.event(state,action.payload.filterType);
+              state.data =  filter.type.event(state.data,action.payload.filterType);
+              break;
           case "SORT_NAME":
-              return filter.name.event(state,action.payload.filterName);
+              state.data =  filter.name.event(state.data,action.payload.filterName);
+              break;
           case "SORT_DATE":
-              return filter.date.event(state,action.payload.filterDate);
+              state.data = filter.date.event(state.data,action.payload.filterDate);
+              break;
           default:
               return state;
       }
+      return state;
     }
-  }
+  },
+  extraReducers: (builder) => {
+    // The `builder` callback form is used here because it provides correctly typed reducers from the action creators
+    builder.addCase(getFoods.fulfilled, (state, { payload }) => {
+      // upload status
+      state.page++;
+      return foods.reload(state,payload.foods);
+
+    })
+    .addCase(getFoods.pending, (state, action) => {
+      console.log("pending")
+    })
+    .addCase(getFoods.rejected, (state, action) => {
+      
+      console.log("error")
+    })
+
+
+  },
 })
 
 // Action creators are generated for each case reducer function
@@ -41,21 +70,39 @@ const foods = {
 }
 foods.add = (state,item)=>{
    
-  state.unshift(item);
+  state.data.unshift(item);
   return state;
 }
 foods.reload = (state,data)=>{
-  // when call api change [
-      // ...state,
-      // ...data
-  // ]
-  return [
-      ...state,
-      data
+  if(state.page == 0){
+    state.data = data;
+    return state;  
+  }
+  state.data = [
+      ...state.data,
+      ...data
   ];
+  return state;
 }
-foods.remove = (data,id)=>{
-  return data.filter(i=>{
+foods.remove = (state,id)=>{
+  state.data = state.data.filter(i=>{
       return i.id !== id;
     });
+  return state;
 }
+
+export const getFoods = createAsyncThunk(
+  'foods/getFoods',
+  async (page = 0, thunkAPI) => {
+    const response = await axiosClient.get("/refrigerator/"+page);
+    return response
+  }
+)
+
+export const addFoods = createAsyncThunk(
+  'foods/addFoods',
+  async (item, thunkAPI) => {
+    const response = await axiosClient.get("/refrigerator/"+page);
+    return response
+  }
+)

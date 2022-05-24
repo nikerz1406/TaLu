@@ -1,7 +1,7 @@
 import React,{ useState,useEffect } from 'react';
 import { View,Text,StyleSheet,TouchableOpacity , ToastAndroid  } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import axiosClient  from '../utilities/axiosClient';
+import axiosClient  from '../utilities/initToken';
 import QRCode from 'react-native-qrcode-svg';
 
 let logoFromFile = require('../assets/icon.png');
@@ -25,7 +25,8 @@ export const Refrige = (props) => {
   
   useEffect(()=>{
     
-    axiosClient.get('/refrigerator').then(function (response) {
+    axiosClient.get('BabyName/initToken').then(function (response) {
+      console.log({response});
       // handle success
       response.token && setToken(response.token)
     })
@@ -33,9 +34,10 @@ export const Refrige = (props) => {
       // handle error
       console.log(error);
     })
+
  
     return ()=>{
-      console.log("This will be axiosClient");
+      console.log("end get token")
     };
   },[])
   return (
