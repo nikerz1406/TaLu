@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const axiosClient = axios.create({
   baseURL:'https://api.khochangchang.com/api/',
-  headers:{
-    'content-type':'application/json',
-  },
+  // headers:{
+  //   'content-type':'application/json',
+  // },
   // paramsSerializer:params => queryString.stringify(params),
 })
 

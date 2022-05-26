@@ -1,16 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
-import badgeReducer from './Reducers/badgeSlice';
-import filterReducer from './Reducers/filtersSlice';
-import foodsReducer from './Reducers/foodsSlice';
-import recycleReducer from './Reducers/recycleSlice';
-import refrigetatorReducer from './Reducers/refrigetatorSlice';
+import badgeReducers from './Reducers/badgeSlice';
+import filterReducers from './Reducers/filtersSlice';
+import foodsReducers from './Reducers/foodsSlice';
+import recycleReducers from './Reducers/recycleSlice';
+import qrReducers from './Reducers/qrSlice';
+import refrigetatorReducers from './Reducers/refrigetatorSlice';
 
 export default configureStore({
   reducer: {
-    foods : foodsReducer,
-    refrigetator : refrigetatorReducer,
-    filterFoods:filterReducer,
-    badge:badgeReducer,
-    history:recycleReducer
+    foods : foodsReducers,
+    qr : qrReducers,
+    filterFoods:filterReducers,
+    badge:badgeReducers,
+    history:recycleReducers,
+    refrigetator:refrigetatorReducers
   }
 })

@@ -59,11 +59,11 @@ export const Tabs = props => {
           name="Qr"
           
           options={{
-            tabBarLabel: 'Qr',
+            tabBarLabel: 'Scan',
             tabBarVisible:"true",
             tabBarBadge:null,
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="qrcode" color={color} size={24} />
+              <MaterialCommunityIcons name="line-scan" color={color} size={24} />
             ),
           }}
         >

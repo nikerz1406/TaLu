@@ -1,9 +1,9 @@
-import React,{ useState } from 'react';
-import { TouchableOpacity,SafeAreaView,View,Text,StyleSheet,TextInput,Keyboard  } from 'react-native';
+import React,{ useState,useEffect } from 'react';
+import { TouchableOpacity,View,Text,StyleSheet,TextInput,Keyboard  } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-
-import { foodsReducers } from '../redux/Reducers/foodsSlice';
+import { addFoods } from '../redux/Reducers/foodsSlice';
 import { badgeReducers } from '../redux/Reducers/badgeSlice';
+import { useNavigation } from '@react-navigation/native';
 
 
 const clickMark = (checkMark,id) =>{
@@ -21,23 +21,21 @@ const clickMark = (checkMark,id) =>{
   
 }
 
-const clickOK = (dispatch,text,checkMark,setText,setIsCommit,meat,vegetable) =>{
+const clickOK = (dispatch,text,checkMark,setText,meat,vegetable,refrigerator) => {
   const type = meat == true ? 0 : vegetable == true ? 1 : 2;
 
   if(text == null || text != false){
-    var item = initData(type,text);
+
     dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'add'}))
-    dispatch(foodsReducers({type:'ADD_FOOD',item}));
+    var refrigera_id = refrigerator;
+    dispatch(addFoods({ type,refrigera_id,name:text }));
     
   }
 
   console.log("click ok");
   clickCancel(checkMark,setText)
-  setIsCommit(true);
 
-  // setTimeout(()=>{
-  //   setIsCommit(false);
-  // },1000)
+
 }
 const clickCancel = (checkMark,setText) =>{
   setText(null);
@@ -50,9 +48,10 @@ export const Plus = () => {
   const [meat, setMeat] = useState(true);
   const [starch, setStarch] = useState(false);
   const [vegetable, setVegetable] = useState(false);
-  const [isCommit,setIsCommit] = useState(false);
+  // const isRegisted = useSelector((state) => state.refrigetator.isRegisted);
+  const refrigerator = useSelector((state) => state.qr.value);
+  const navigation = useNavigation();
   const dispatch = useDispatch();
-  
   
   const checkMark = function({
     meat = false,
@@ -63,6 +62,18 @@ export const Plus = () => {
     setStarch(starch)
     setVegetable(vegetable)
   }
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // if(isRegisted == false){
+      //   console.log("not registed")
+      //   navigation.navigate('Qr');
+      // }
+      
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   
   return (
     <View style={styles.container} >
@@ -106,7 +117,7 @@ export const Plus = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.button_item} >
-          <TouchableOpacity onPress={()=>clickOK(dispatch,text,checkMark,setText,setIsCommit,meat,vegetable)}>
+          <TouchableOpacity onPress={()=>clickOK(dispatch,text,checkMark,setText,meat,vegetable,refrigerator)}>
             <Text style={styles.button}>OK</Text>
           </TouchableOpacity>
         </View>
@@ -193,16 +204,3 @@ const styles = StyleSheet.create({
     fontWeight:"bold"
   }
 })
-
-
-const initData = (type,name)=>{
-      var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
-      var value = Math.floor(Math.random() * 60*60*24*365);
-      var today  = new Date(value);
-      var item = {
-      id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
-      name,
-      }
-
-  return item;
-}

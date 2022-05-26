@@ -2,6 +2,7 @@ import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
 // import { initData } from '../../utilities/test';
 import filter from '../../utilities/filter';
 import axiosClient from '../../utilities/axiosClient';
+import axios from 'axios';
 
 // const initalState = initData(2);
 const initialState = {
@@ -54,6 +55,19 @@ export const foodsSlice = createSlice({
       console.log("error")
     })
 
+    builder.addCase(addFoods.fulfilled, (state, { payload }) => {
+
+      // upload status
+      return foods.add(state,payload);
+
+    })
+    .addCase(addFoods.pending, (state, action) => {
+      console.log("pending")
+    })
+    .addCase(addFoods.rejected, (state, action) => {
+      console.log("error")
+      console.log({action})
+    })
 
   },
 })
@@ -94,15 +108,19 @@ foods.remove = (state,id)=>{
 export const getFoods = createAsyncThunk(
   'foods/getFoods',
   async (page = 0, thunkAPI) => {
-    const response = await axiosClient.get("/refrigerator/"+page);
+    const response = await axiosClient.get("refrigerator/"+page);
     return response
   }
 )
 
 export const addFoods = createAsyncThunk(
   'foods/addFoods',
-  async (item, thunkAPI) => {
-    const response = await axiosClient.get("/refrigerator/"+page);
-    return response
+  ({ type,name,refrigera_id }, thunkAPI) => {
+    var formData = new FormData();
+    formData.append('type',type);
+    formData.append('name',name);
+    formData.append('refrigera_id',refrigera_id);
+    return axiosClient.post('refrigerator/', formData);
+
   }
 )

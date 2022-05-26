@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button ,TouchableOpacity,TextInput,Dimensions} from 'react-native';
+import { Text, View, StyleSheet, Button ,TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { MaterialCommunityIcons,Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 
-import  { refrigetatorReducers } from '../redux/Reducers/refrigetatorSlice';
+import  { refrigetatorReducers } from '../redux/Reducers/qrSlice';
 
-const openScan = (setScanned,setIsRegisted,dispatch)=>{
+const openScan = (setScanned,dispatch)=>{
   setScanned(false);
-  setIsRegisted(null);
+  // setIsRegisted(null);
   dispatch(refrigetatorReducers({type:"ADD_REFRIGETATOR",value:"Waitting scanner"}))
 }
 export const Qr = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(true);
-  const refrigerator = useSelector((state) => state.refrigetator);
-  const [isRegisted, setIsRegisted] = useState(()=>{
-    return refrigerator != undefined;
-  });
+  const refrigerator = useSelector((state) => state.qr.value);
+  const isRegisted = useSelector((state) => state.qr.registed);
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
@@ -47,7 +45,7 @@ export const Qr = (props) => {
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     
     // connect server, valid refrigetator
-    setIsRegisted(true);
+    // setIsRegisted(true);
 
     dispatch(refrigetatorReducers({type:'ADD_REFRIGETATOR',value:data}))
   };
@@ -60,22 +58,22 @@ export const Qr = (props) => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.camera}>
-        { scanned ? <View style={styles.qrcode} >
-          <TouchableOpacity onPress={() => setScanned(false)} >
-            <MaterialCommunityIcons style={{marginTop:40}} name="qrcode-scan" size={200} />
+    <View style ={ styles.container } >
+      <View style ={ styles.camera } >
+        { scanned ? <View style ={ styles.qrcode } >
+          <TouchableOpacity onPress ={ () => setScanned(false)} >
+            <MaterialCommunityIcons style ={ {marginTop:40}} name="qrcode-scan" size ={ 200 } />
           </TouchableOpacity>
           </View> :
-        <BarCodeScanner  onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} style={styles.qrcode} /> 
+        <BarCodeScanner  onBarCodeScanned ={ scanned ? undefined : handleBarCodeScanned} style ={ styles.qrcode } /> 
         }
-        { scanned == false && <View style={{marginTop:10}} ><Text style={styles.scanning}>Scanning...</Text></View> }
+        { scanned == false && <View style ={ {marginTop:10}} ><Text style ={ styles.scanning } >Scanning...</Text></View> }
       </View>
-      <View style={styles.body}>
-        <LabelRefrigerator name={refrigerator} state={isRegisted} />        
+      <View style ={ styles.body } >
+        <LabelRefrigerator name ={  refrigerator } state ={  isRegisted } />        
       </View>  
-      <View style={styles.bot}>
-        { scanned == true && <Button title={'Open Scan'} onPress={() => openScan(setScanned,setIsRegisted,dispatch)}/> }
+      <View style ={ styles.bot } >
+        { scanned == true && <Button title ={ 'Open Scan'} onPress ={ () => openScan(setScanned,dispatch)}/> }
       </View>    
     </View>
   );
@@ -83,13 +81,12 @@ export const Qr = (props) => {
 
 const LabelRefrigerator = (props) => {
   const color = props.state === false ? "red" : props.state === true ? "green" : "#212121";
+  const icon = props.state === false ? "cancel" : props.state === true ? "check-circle" : "sync";
   return(
     <View>
-      <Text style={styles.Refrigerator} >
-          { props.state === false && <MaterialCommunityIcons name="cancel" color="red" size={15}/> } 
-          { props.state === null && <MaterialCommunityIcons name="sync" color="#212121" size={15}/> }
-          { props.state === true && <Feather name="check-circle" color="green" size={15}/> } Refrigerator - 
-        <Text style={{color:color,fontWeight:"bold"}}> {props.name}</Text>
+      <Text style ={ styles.Refrigerator } >
+          <MaterialCommunityIcons name ={  icon } color ={  color } size ={ 15}/>  Refrigerator - 
+        <Text style ={ {color:color,fontWeight:"bold"} } > {props.name}</Text>
       </Text> 
     </View>
   )

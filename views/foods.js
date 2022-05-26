@@ -56,7 +56,7 @@ const onEnd = (dispatch,page) => {
 
   // get data
   // var new_page  = page+1;
-  // dispatch(getFoods(new_page));
+  // dispatch(getFoods());
 
   console.log("end scroll")
 
@@ -89,8 +89,8 @@ export const FoodLists = () => {
   useEffect(() => {
     
     if(listFoods.length == 0){
-       // get data
-     dispatch(getFoods());
+      // get data
+      dispatch(getFoods());
     }
     
   },[])
@@ -100,7 +100,8 @@ export const FoodLists = () => {
       // Prevent default behavior
       // e.preventDefault();
 
-    
+      // get data
+      // dispatch(getFoods());
 
       // Do something manually
       dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
