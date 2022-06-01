@@ -23,7 +23,7 @@ export const foodsSlice = createSlice({
           case "RELOAD_FOODS":            
               return foods.reload(state,action.payload)
           case "REMOVE_FOOD":
-            return foods.remove(state,action.payload.id);
+            return foods.remove(state,action.payload.code);
           case "ADD_FOOD":            
               return foods.add(state,action.payload.item);
           case "UNDO_FOOD":
@@ -47,7 +47,6 @@ export const foodsSlice = createSlice({
     // The `builder` callback form is used here because it provides correctly typed reducers from the action creators
     builder.addCase(getFoods.fulfilled, (state, { payload }) => {
       // upload status
-      state.page++;
       return foods.reload(state,payload.foods);
 
     })
@@ -60,8 +59,7 @@ export const foodsSlice = createSlice({
     })
 
     builder.addCase(addFoods.fulfilled, (state, { payload }) => {
-
-      // upload status
+      
       return foods.add(state,payload);
 
     })
@@ -86,9 +84,6 @@ const foods = {
   remove:null
 }
 foods.add = (state,item)=>{
-  var id = state.data.length;
-  id = id ? id + 1 : 1;
-  item.id = item.id ? item.id : id;
   state.data.unshift(item);
   return state;
 }
@@ -97,28 +92,33 @@ foods.undo = (state,item)=>{
   return state;
 }
 foods.reload = (state,data)=>{
-  if(state.page == 0){
+  if(state.data.length == 0){
     state.data = data;
     return state;  
   }
-  state.data = [
-      ...state.data,
-      ...data
-  ];
+  if(data.length ==0){
+    state.page++;
+  }
+  var new_data = [
+    ...state.data,...data
+  ]
+  state.data = new_data.filter((value, index, self) => 
+  self.findIndex((m) => m.code === value.code) === index);
   return state;
 }
-foods.remove = (state,id)=>{
+foods.remove = (state,code)=>{
   state.data = state.data.filter(i=>{
-      return i.id !== id;
+      return i.code !== code;
     });
   return state;
 }
 
 export const getFoods = createAsyncThunk(
   'foods/getFoods',
-  async (page = 0, thunkAPI) => {
-    const response = await axiosClient.get("refrigerator/"+page);
-    return response
+  async (item = {page : 0,refrigera_id :null}, thunkAPI) => {
+
+    const response = await axiosClient.get("refrigerator/" + item.page + "/" + item.refrigera_id);
+    return response;
   }
 )
 

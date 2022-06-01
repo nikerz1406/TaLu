@@ -12,7 +12,7 @@ export const recycleSlice = createSlice({
           case 'ADD_RECYCLE':
               return recycle.add(state,action.payload.item); 
           case 'CLEAR_RECYCLE':
-              return recycle.clear(); 
+              return recycle.clear(state); 
           case "SORT_RECYCLE_TYPE":
               return filter.type.event(state,action.payload.filterType);
           case "SORT_RECYCLE_NAME":
@@ -37,13 +37,17 @@ const recycle = {
 }
 recycle.undo = (data,action) =>{
   return data.filter(i=>{
-      return i.id !== action.id;
+      return i.code !== action.code;
     });
 }
 recycle.add = (data,item) =>{
   data.unshift(item);
   return data;
 }
-recycle.clear = () =>{
-  return [];
+recycle.clear = (data) =>{
+  var now = Date.now();
+  // remove recycle 48 hours = 172800000
+  return data.filter(i => {
+    return now - Date.parse(i.date) >  172800000;
+  });
 }

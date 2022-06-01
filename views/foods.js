@@ -1,4 +1,4 @@
-import React,{ useEffect, useState,useCallback } from 'react';
+import React,{ useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Text,TouchableOpacity,Button } from 'react-native';
 import { MaterialCommunityIcons,Ionicons,FontAwesome } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,14 +7,14 @@ import { foodsReducers,getFoods } from '../redux/Reducers/foodsSlice';
 import  { recycleReducers } from '../redux/Reducers/recycleSlice';
 import { badgeReducers } from '../redux/Reducers/badgeSlice';
 import { useNavigation } from '@react-navigation/native';
-import { foodColors } from '../utilities/const';
+import { foodColors,foodColorsDark } from '../utilities/const';
 
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter")
   dispatch(filterReducers({type:"FILTER_TYPE"}));
   dispatch(foodsReducers({type:"SORT_TYPE",filterType:mode}));
 
-  var color = mode == 0 ? "#EF5350" : mode == 1 ? "#FDD835" : "#66BB6A";
+  var color = mode == 0 ? foodColorsDark.red : mode == 1 ? foodColorsDark.green : foodColorsDark.yellow;
   filterIcon({type:color})
 
   flatListRef.scrollToOffset({ animated: true, offset: 0 });
@@ -40,23 +40,10 @@ const clickDate = (dispatch,mode,filterIcon)=>{
 
 }
 
-const onEnd = (dispatch,page) => {
-  // var id = Math.random().toString(36).substr(2)+Math.random().toString(36).substr(2); 
-  // var today  = new Date();
-  // var type = Math.floor(Math.random() * 3);
-  // var item = {
-  //   id,date:today.toLocaleDateString(),time:today.toLocaleTimeString(),type,
-  //   name:id
-  // }
-  
-  // // var new_data = [...listFoods,item];
-  // dispatch({
-  //   type:"RELOAD_FOODS",payload:item
-  // });
+const onEnd = (dispatch,page,qr) => {
 
   // get data
-  // var new_page  = page+1;
-  // dispatch(getFoods());
+  dispatch(getFoods({page,refrigera_id:qr}));
 
   console.log("end scroll")
 
@@ -71,6 +58,7 @@ export const FoodLists = () => {
   const [iconFilterName,setIconFilterName] = useState('md-search-outline');
   const [colorFilterType,setColorFilterType] = useState('#424242');
   const [iconFilterDate,setIconFilterDate] = useState('text-search');
+  const qr = useSelector((state) => state.qr.value);
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
@@ -78,7 +66,7 @@ export const FoodLists = () => {
   const filterIcon = function({ 
     // default value
     name='md-search-outline',
-    type=filterTypeColors.default,
+    type=foodColorsDark.default,
     date='text-search'
   }){
     setColorFilterType(type)
@@ -90,7 +78,7 @@ export const FoodLists = () => {
     
     if(listFoods.length == 0){
       // get data
-      dispatch(getFoods());
+      dispatch(getFoods({page:0,refrigera_id:qr}));
       console.log(listFoods)
     }
     
@@ -106,7 +94,7 @@ export const FoodLists = () => {
 
       // Do something manually
       dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
-      console.log(listFoods)
+
     });
   
     return unsubscribe;
@@ -149,9 +137,9 @@ export const FoodLists = () => {
           data={listFoods}
           renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
           ref={(ref) => { flatListRef = ref; }}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.code}
           onEndReachedThreshold={0.5}
-          onEndReached={()=>onEnd(dispatch)}
+          onEndReached={()=>onEnd(dispatch,page,qr)}
           ListEmptyComponent={<Empty/>}
           progressViewOffset={100}
           onRefresh={onRefresh}
@@ -204,7 +192,7 @@ const renderItem = ({ item,dispatch,mode }) => {
   // const dispatch = useDispatch();
   const clickRemove = ()=>{
     console.log("click remove")
-    dispatch(foodsReducers({type:"REMOVE_FOOD",id:item.id}))
+    dispatch(foodsReducers({type:"REMOVE_FOOD",code:item.code}))
     dispatch(recycleReducers({type:"ADD_RECYCLE",item:item}))
     dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'add'}))
     dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))

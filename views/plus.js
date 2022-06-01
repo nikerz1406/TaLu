@@ -6,7 +6,6 @@ import { badgeReducers } from '../redux/Reducers/badgeSlice';
 import { useNavigation } from '@react-navigation/native';
 import { foodColors,foodColorsDark } from '../utilities/const';
 
-
 const clickMark = (checkMark,id) =>{
   switch (id) {
     case 0:
@@ -35,7 +34,6 @@ const clickOK = (dispatch,text,checkMark,setText,meat,vegetable,refrigerator) =>
 
   console.log("click ok");
   clickCancel(checkMark,setText)
-
 
 }
 const clickCancel = (checkMark,setText) =>{

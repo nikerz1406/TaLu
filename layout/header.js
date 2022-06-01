@@ -23,23 +23,13 @@ export const Header = props => {
     <View style={styles.header}>
       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         <View style={styles.container}>
-          
-          <Image
-                style={styles.logo}
-                source={{uri:source_img}}
-              />
+          <Image style={styles.logo} source={{uri:source_img}} />
           <Text style={styles.title} >{props.title}</Text>
           <View style={styles.display}>
             { isDisplayBtnFoods && <TouchableOpacity style={styles.button} onPress={ clickPlus }>
               <Text style={styles.btn_text}>Plus <MaterialCommunityIcons name="plus-circle" size={15} color="#388E3C" /></Text>
             </TouchableOpacity> }
-            {/* { isDisplayBtnPlus && <TouchableOpacity style={styles.voice} onPress={ clickVoice } >
-                <MaterialIcons style={{ textAlign: 'center',color:"#1976D2" }} name="keyboard-voice" size={23} />
-              <Text style={{ textAlign: 'center',color:"#1976D2",fontSize:10}} >Voice</Text>
-            </TouchableOpacity>
-            } */}
           </View>
-          
         </View>
       </ImageBackground>
     </View>

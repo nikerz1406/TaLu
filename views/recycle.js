@@ -1,7 +1,7 @@
 import { View, FlatList, StyleSheet, Text,TouchableOpacity } from 'react-native';
 import React,{ useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons,Ionicons,FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { foodColors } from '../utilities/const';
 
@@ -66,6 +66,7 @@ export const Recycle = () => {
   }
 
 
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('tabPress', (e) => {
       // Prevent default behavior
@@ -73,7 +74,8 @@ export const Recycle = () => {
 
       // Do something manually
       dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
-      
+      dispatch(recycleReducers({type:"CLEAR_RECYCLE"}))
+
     });
   
     return unsubscribe;
@@ -106,7 +108,7 @@ export const Recycle = () => {
         data={history}
         renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
         ref={(ref) => { flatListRef = ref; }}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.code}
         onEndReachedThreshold={0.5}
         // onEndReached={()=>onEnd(dispatch)}
         ListEmptyComponent={<Empty/>}
@@ -161,9 +163,8 @@ const renderItem = ({ item,dispatch,mode }) => {
 
   const clickUndo = ()=>{
     console.log("click undo")
-    // dispatch({type:"REMOVE_FOOD",id:item.id})
 
-    dispatch(recycleReducers({type:"UNDO_RECYCLE",id:item.id}))
+    dispatch(recycleReducers({type:"UNDO_RECYCLE",code:item.code}))
     dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
     dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'add'}))
     dispatch(foodsReducers({type:"UNDO_FOOD",item}))
@@ -171,8 +172,8 @@ const renderItem = ({ item,dispatch,mode }) => {
   return(
     <View style={[styles.item,{backgroundColor:color}]}>
     <View style={styles.fitler}>
-      <TouchableOpacity onPress={ clickUndo } style={{ marginLeft:10 }}>
-        <MaterialCommunityIcons name="undo-variant" size={30} color="#424242" />
+      <TouchableOpacity onPress={ clickUndo } style={{ marginLeft:15 }}>
+        <FontAwesome5 name="undo" size={20} color="#424242" />
       </TouchableOpacity>  
     </View>
     <View style={styles.name}><Text>{item.name}</Text></View>
