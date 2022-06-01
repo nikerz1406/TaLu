@@ -5,17 +5,17 @@ import { MaterialCommunityIcons,Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 
-import  { refrigetatorReducers } from '../redux/Reducers/qrSlice';
+import  { qrReducers } from '../redux/Reducers/qrSlice';
 
-const openScan = (setScanned,dispatch)=>{
-  setScanned(false);
+const openScan = (dispatch)=>{
+  
   // setIsRegisted(null);
-  dispatch(refrigetatorReducers({type:"ADD_REFRIGETATOR",value:"Waitting scanner"}))
+  dispatch(qrReducers({type:"WAITTING_QR"}))
+
 }
 export const Qr = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(true);
-  const refrigerator = useSelector((state) => state.qr.value);
+  const qr = useSelector((state) => state.qr);
   const isRegisted = useSelector((state) => state.qr.registed);
   const dispatch = useDispatch();
 
@@ -32,7 +32,7 @@ export const Qr = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       // do something
-      setScanned(true);
+      dispatch(qrReducers({type:"OUT_SCREEN"}))
       
     });
 
@@ -41,13 +41,10 @@ export const Qr = (props) => {
 
   const handleBarCodeScanned = ({ type, data }) => {
 
-    setScanned(true);
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    
-    // connect server, valid refrigetator
-    // setIsRegisted(true);
+    dispatch(qrReducers({type:'ADD_QR',value:data}))
 
-    dispatch(refrigetatorReducers({type:'ADD_REFRIGETATOR',value:data}))
+    if(qr.registed) navigation.navigate('Foods');  
+  
   };
 
   if (hasPermission === null) {
@@ -60,20 +57,26 @@ export const Qr = (props) => {
   return (
     <View style ={ styles.container } >
       <View style ={ styles.camera } >
-        { scanned ? <View style ={ styles.qrcode } >
-          <TouchableOpacity onPress ={ () => setScanned(false)} >
+        { qr.scanning == false ? <View style ={ styles.qrcode } >
+          <TouchableOpacity  onPress ={ () => openScan(dispatch)} >
             <MaterialCommunityIcons style ={ {marginTop:40}} name="qrcode-scan" size ={ 200 } />
           </TouchableOpacity>
           </View> :
-        <BarCodeScanner  onBarCodeScanned ={ scanned ? undefined : handleBarCodeScanned} style ={ styles.qrcode } /> 
+        <BarCodeScanner  onBarCodeScanned ={ qr.scanned ? undefined : handleBarCodeScanned} style ={ styles.qrcode } /> 
         }
-        { scanned == false && <View style ={ {marginTop:10}} ><Text style ={ styles.scanning } >Scanning...</Text></View> }
+        { qr.scanning == true && <View style ={ {marginTop:10}} ><Text style ={ styles.scanning } >Scanning...</Text></View> }
       </View>
       <View style ={ styles.body } >
-        <LabelRefrigerator name ={  refrigerator } state ={  isRegisted } />        
+        <LabelRefrigerator name ={  qr.value } state ={  isRegisted } />        
       </View>  
       <View style ={ styles.bot } >
-        { scanned == true && <Button title ={ 'Open Scan'} onPress ={ () => openScan(setScanned,dispatch)}/> }
+        { qr.scanning == false && 
+          <View>
+          <TouchableOpacity onPress ={ () => openScan(dispatch)} >
+            <Text style={[styles.button,styles.open_scan]}>Open Scan</Text>
+          </TouchableOpacity>
+        </View>
+        }
       </View>    
     </View>
   );
@@ -132,5 +135,16 @@ const styles = StyleSheet.create({
     backgroundColor:"#CFD8DC",
     width:"100%",
     alignItems:"center",
-  }
+  },
+  button:{
+    width:"100%",
+    paddingVertical:9,
+    paddingHorizontal:20,
+    borderRadius:3,
+    borderWidth:1,
+    textAlign:"center"
+  },
+  open_scan:{
+    backgroundColor:"white",
+  },
 });

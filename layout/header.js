@@ -33,11 +33,11 @@ export const Header = props => {
             { isDisplayBtnFoods && <TouchableOpacity style={styles.button} onPress={ clickPlus }>
               <Text style={styles.btn_text}>Plus <MaterialCommunityIcons name="plus-circle" size={15} color="#388E3C" /></Text>
             </TouchableOpacity> }
-            { isDisplayBtnPlus && <TouchableOpacity style={styles.voice} onPress={ clickVoice } >
+            {/* { isDisplayBtnPlus && <TouchableOpacity style={styles.voice} onPress={ clickVoice } >
                 <MaterialIcons style={{ textAlign: 'center',color:"#1976D2" }} name="keyboard-voice" size={23} />
               <Text style={{ textAlign: 'center',color:"#1976D2",fontSize:10}} >Voice</Text>
             </TouchableOpacity>
-            }
+            } */}
           </View>
           
         </View>

@@ -1,10 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+// // test case
+// const initialState = {
+//   value: 'No ID',
+//   registed: true,
+//   scanning:false,
+//   base64:null
+// }
 
+// product case 
 const initialState = {
   value: 'No ID',
   registed: false,
-  base64:null
+  scanning:false,
+  base64:null,
+  old:null
 }
 
 export const qrSlice = createSlice({
@@ -16,14 +26,27 @@ export const qrSlice = createSlice({
         case "ADD_QR":        
             return { 
               value: action.payload.value,
-              registed:true,
+              registed: true,
+              scanning:false,
+              base64:state.base64,
+              old:action.payload.value
             };
-        case "LOADING_QR":
-            
-            return {
-              value:'loading...',
-              registed:false,
-            };
+        case "WAITTING_QR":
+          return {
+              value:'waitting...',
+              registed: state.registed,
+              scanning:true,
+              base64:state.base64,
+              old:state.old
+          }
+        case "OUT_SCREEN":
+          return {
+            value:state.old,
+            registed: state.registed,
+            scanning:false,
+            base64:state.base64,
+            old:state.old
+          }
         default:
             return state;
       }
@@ -35,3 +58,9 @@ export const qrSlice = createSlice({
 export const { qrReducers } = qrSlice.actions
 
 export default qrSlice.reducer
+
+const qr = {
+  add_qr:null,
+  loading_qr:null,
+  
+}

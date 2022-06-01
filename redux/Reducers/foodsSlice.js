@@ -12,6 +12,8 @@ const initialState = {
   page:0,
 }
 
+// status: 'idle' | 'pending' | 'succeeded' | 'failed'
+
 export const foodsSlice = createSlice({
   name: 'foods',
   initialState: initialState,
@@ -24,6 +26,8 @@ export const foodsSlice = createSlice({
             return foods.remove(state,action.payload.id);
           case "ADD_FOOD":            
               return foods.add(state,action.payload.item);
+          case "UNDO_FOOD":
+            return foods.undo(state,action.payload.item);
           case "SORT_TYPE":
               state.data =  filter.type.event(state.data,action.payload.filterType);
               break;
@@ -66,7 +70,6 @@ export const foodsSlice = createSlice({
     })
     .addCase(addFoods.rejected, (state, action) => {
       console.log("error")
-      console.log({action})
     })
 
   },
@@ -83,7 +86,13 @@ const foods = {
   remove:null
 }
 foods.add = (state,item)=>{
-   
+  var id = state.data.length;
+  id = id ? id + 1 : 1;
+  item.id = item.id ? item.id : id;
+  state.data.unshift(item);
+  return state;
+}
+foods.undo = (state,item)=>{
   state.data.unshift(item);
   return state;
 }

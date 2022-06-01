@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addFoods } from '../redux/Reducers/foodsSlice';
 import { badgeReducers } from '../redux/Reducers/badgeSlice';
 import { useNavigation } from '@react-navigation/native';
+import { foodColors,foodColorsDark } from '../utilities/const';
 
 
 const clickMark = (checkMark,id) =>{
@@ -81,21 +82,21 @@ export const Plus = () => {
          {/* <Text style={styles.alert} >text</Text>  */}
       </View>
       <View style={styles.container_type} >
-        <TouchableOpacity onPress={()=>clickMark(checkMark,dispatch,0)} >
+        <TouchableOpacity onPress={()=>clickMark(checkMark,0)} >
           <View style={styles.item} >
-            { meat ? <View style={[{backgroundColor:"#EF5350"},styles.circle,styles.active]} ></View> : <View style={[{backgroundColor:"#EF5350"},styles.circle]} ></View>}
+            { meat ? <View style={[{backgroundColor:foodColorsDark.red},styles.circle,styles.active]} ></View> : <View style={[{backgroundColor:foodColors.red},styles.circle]} ></View>}
             { meat ?  <Text style={styles.text_active}> Meat </Text> : <Text> Meat </Text> }
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>clickMark(checkMark,1)} >
           <View style={styles.item}>
-            { vegetable ? <View style={[{backgroundColor:"#FDD835"},styles.circle,styles.active]} ></View> : <View style={[{backgroundColor:"#FDD835"},styles.circle]} ></View> }
+            { vegetable ? <View style={[{backgroundColor:foodColorsDark.yellow},styles.circle,styles.active]} ></View> : <View style={[{backgroundColor:foodColors.yellow},styles.circle]} ></View> }
             { vegetable ? <Text style={styles.text_active} > Starch </Text> : <Text> Starch </Text> }
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>clickMark(checkMark,2)} >
           <View style={styles.item}>
-            { starch ? <View style={[{backgroundColor:"#66BB6A"},styles.circle,styles.active]} ></View> : <View style={[{backgroundColor:"#66BB6A"},styles.circle]} ></View> } 
+            { starch ? <View style={[{backgroundColor:foodColorsDark.green},styles.circle,styles.active]} ></View> : <View style={[{backgroundColor:foodColors.green},styles.circle]} ></View> } 
             { starch ? <Text style={styles.text_active} > Vegetable </Text> : <Text> Vegetable </Text> }
           </View>
         </TouchableOpacity>

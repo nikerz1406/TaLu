@@ -24,6 +24,7 @@ target 'AwesomeProject' do
   pod 'RNSoundPlayer', :path => '../node_modules/react-native-sound-player'
 
 
+
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
 end

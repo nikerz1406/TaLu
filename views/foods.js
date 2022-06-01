@@ -1,13 +1,13 @@
 import React,{ useEffect, useState,useCallback } from 'react';
 import { View, FlatList, StyleSheet, Text,TouchableOpacity,Button } from 'react-native';
-import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons,Ionicons,FontAwesome } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { filterReducers } from '../redux/Reducers/filtersSlice';
 import { foodsReducers,getFoods } from '../redux/Reducers/foodsSlice';
 import  { recycleReducers } from '../redux/Reducers/recycleSlice';
 import { badgeReducers } from '../redux/Reducers/badgeSlice';
 import { useNavigation } from '@react-navigation/native';
-
+import { foodColors } from '../utilities/const';
 
 const clickFilter = (dispatch,flatListRef,mode,filterIcon)=>{
   console.log("click filter")
@@ -78,7 +78,7 @@ export const FoodLists = () => {
   const filterIcon = function({ 
     // default value
     name='md-search-outline',
-    type='#424242',
+    type=filterTypeColors.default,
     date='text-search'
   }){
     setColorFilterType(type)
@@ -91,6 +91,7 @@ export const FoodLists = () => {
     if(listFoods.length == 0){
       // get data
       dispatch(getFoods());
+      console.log(listFoods)
     }
     
   },[])
@@ -105,6 +106,7 @@ export const FoodLists = () => {
 
       // Do something manually
       dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
+      console.log(listFoods)
     });
   
     return unsubscribe;
@@ -144,16 +146,16 @@ export const FoodLists = () => {
         style={{ 
           // backgroundColor:"red",
           width:"100%"}}
-        data={listFoods}
-        renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
-        ref={(ref) => { flatListRef = ref; }}
-        keyExtractor={item => item.id}
-        onEndReachedThreshold={0.5}
-        onEndReached={()=>onEnd(dispatch)}
-        ListEmptyComponent={<Empty/>}
-        progressViewOffset={100}
-        onRefresh={onRefresh}
-        refreshing={isFetching}
+          data={listFoods}
+          renderItem={({item}) =>renderItem({item,dispatch,mode:filterFoods.date})}
+          ref={(ref) => { flatListRef = ref; }}
+          keyExtractor={item => item.id}
+          onEndReachedThreshold={0.5}
+          onEndReached={()=>onEnd(dispatch)}
+          ListEmptyComponent={<Empty/>}
+          progressViewOffset={100}
+          onRefresh={onRefresh}
+          refreshing={isFetching}
       />
     </View>
   );
@@ -170,7 +172,6 @@ const styles = StyleSheet.create({
   },
   head_table:{ flexDirection:"row",marginBottom:10,borderBottomColor:"#757575",borderBottomWidth:1,marginHorizontal:20,paddingBottom:10},
   item: {
-    backgroundColor: '#FCE4EC',
     flexDirection:"row",
     marginBottom: 8,
     paddingVertical:20,
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent: 'center'
   },
-  name:{ flex:6,marginLeft:15 },
+  name:{ flex:6,marginLeft:15,marginRight:15 },
   plus:{ 
     justifyContent: 'flex-end',
     alignItems:"flex-end",
@@ -199,7 +200,7 @@ const Empty = () =>(
 
 const renderItem = ({ item,dispatch,mode }) => {
 
-  const color = item.type == 0 ? "#EF5350" : item.type == 1 ? "#FDD835" : "#66BB6A";
+  const color = item.type == 0 ? foodColors.red : item.type == 1 ? foodColors.green : foodColors.yellow;
   // const dispatch = useDispatch();
   const clickRemove = ()=>{
     console.log("click remove")
@@ -209,22 +210,23 @@ const renderItem = ({ item,dispatch,mode }) => {
     dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
   }
   return(
-    <View style={styles.item}>
-    <View style={styles.fitler}>
-      <TouchableOpacity onPress={ clickRemove } style={{ marginLeft:10 }}>
-        <MaterialCommunityIcons name="star-remove" size={30} color={color} />
-      </TouchableOpacity>  
+    <View style={[styles.item,{backgroundColor:color}]}>
+      <View style={styles.fitler}>
+        <TouchableOpacity onPress={ clickRemove } style={{ marginLeft:15 }}>
+          <FontAwesome name="remove" size={20} color="#424242" />
+        </TouchableOpacity>  
+      </View>
+      <View style={styles.name}><Text>{item.name}</Text></View>
+      { (mode == 0 || mode == 1) && <View style={styles.date_body}>
+        <Text>{item.date}</Text><Text>{item.time}</Text> 
+      </View>
+      }
+      { (mode == 2 || mode == 3) && <View style={styles.date_body}>
+        <Text>{item.sort_time_txt}</Text>
+      </View>
+      }
+      
     </View>
-    <View style={styles.name}><Text>{item.name}</Text></View>
-    { (mode == 0 || mode == 1) && <View style={styles.date_body}>
-      <Text>{item.date}</Text><Text>{item.time}</Text> 
-    </View>
-    }
-    { (mode == 2 || mode == 3) && <View style={styles.date_body}>
-      <Text>{item.sort_time_txt}</Text>
-    </View>
-    }
-  </View>
   )
 };     
 

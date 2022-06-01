@@ -2,14 +2,10 @@ import * as React from 'react';
 import { Template } from './template';
 import { createMaterialBottomTabNavigator  } from '@react-navigation/material-bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
 
 const Tab = createMaterialBottomTabNavigator();
 
-export const Tabs = props => {
-  const badgeFoods = useSelector((state) => state.badge.foods);
-  const badgePlus = useSelector((state) => state.badge.add);
-  const badgeRemove = useSelector((state) => state.badge.remove);
+export const Stacks = props => {
 
   return (
       <Tab.Navigator
@@ -21,40 +17,6 @@ export const Tabs = props => {
         style={{ backgroundColor: '#fff' }}
         overlayColor="transparent"
       >
-        <Tab.Screen
-          name="Foods"
-          options={{
-            tabBarLabel: 'Foods',
-            tabBarBadge:badgeFoods,
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="format-list-bulleted" color={color} size={24} />
-            ),
-          }}
-        >
-          {props=><Template screen="Foods" />}
-        </Tab.Screen>
-        <Tab.Screen
-          name="Plus"
-          
-          options={{
-            tabBarLabel: 'Plus',
-            tabBarBadge:badgePlus,
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="basket-plus-outline" color={color} size={24} />
-            ),
-          }}
-        >{props=><Template screen="Plus" />}</Tab.Screen>
-        <Tab.Screen
-          name="Recycle"
-          
-          options={{
-            tabBarLabel: 'Recycle',
-            tabBarBadge:badgeRemove,
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="beaker-remove-outline" color={color} size={20} />
-            ),
-          }}
-        >{props=><Template screen="Recycle" />}</Tab.Screen>
         <Tab.Screen
           name="Qr"
           

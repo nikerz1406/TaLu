@@ -3,6 +3,7 @@ import React,{ useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { foodColors } from '../utilities/const';
 
 
 import { foodsReducers } from '../redux/Reducers/foodsSlice';
@@ -127,7 +128,6 @@ const styles = StyleSheet.create({
   },
   head_table:{ flexDirection:"row",marginBottom:10,borderBottomColor:"#757575",borderBottomWidth:1,marginHorizontal:20,paddingBottom:10},
   item: {
-    backgroundColor: '#FCE4EC',
     flexDirection:"row",
     marginBottom: 8,
     paddingVertical:20,
@@ -156,7 +156,7 @@ const Empty = () =>(
 
 const renderItem = ({ item,dispatch,mode }) => {
 
-  const color = item.type == 0 ? "#EF5350" : item.type == 1 ? "#FDD835" : "#66BB6A";
+  const color = item.type == 0 ? foodColors.red : item.type == 1 ? foodColors.green : foodColors.yellow;
   // const dispatch = useDispatch();
 
   const clickUndo = ()=>{
@@ -166,13 +166,13 @@ const renderItem = ({ item,dispatch,mode }) => {
     dispatch(recycleReducers({type:"UNDO_RECYCLE",id:item.id}))
     dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'remove'}))
     dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'add'}))
-    dispatch(foodsReducers({type:"ADD_FOOD",item}))
+    dispatch(foodsReducers({type:"UNDO_FOOD",item}))
   }
   return(
-    <View style={styles.item}>
+    <View style={[styles.item,{backgroundColor:color}]}>
     <View style={styles.fitler}>
       <TouchableOpacity onPress={ clickUndo } style={{ marginLeft:10 }}>
-        <MaterialCommunityIcons name="undo-variant" size={30} color={color} />
+        <MaterialCommunityIcons name="undo-variant" size={30} color="#424242" />
       </TouchableOpacity>  
     </View>
     <View style={styles.name}><Text>{item.name}</Text></View>
