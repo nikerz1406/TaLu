@@ -16,5 +16,9 @@
     "plugins": [
       "expo-camera"
     ]
+  },
+  "splash": {
+    "image": "./assets/icon.png",
+    "resizeMode": "cover"
   }
 }

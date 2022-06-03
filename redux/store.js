@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import badgeReducers from './Reducers/badgeSlice';
 import filterReducers from './Reducers/filtersSlice';
 import foodsReducers from './Reducers/foodsSlice';
-import recycleReducers from './Reducers/recycleSlice';
 import qrReducers from './Reducers/qrSlice';
 import refrigetatorReducers from './Reducers/refrigetatorSlice';
 
@@ -12,7 +11,6 @@ export default configureStore({
     qr : qrReducers,
     filterFoods:filterReducers,
     badge:badgeReducers,
-    history:recycleReducers,
     refrigetator:refrigetatorReducers
   }
 })

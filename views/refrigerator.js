@@ -1,5 +1,5 @@
-import React,{ useState,useEffect } from 'react';
-import { View,Text,StyleSheet,TouchableOpacity , ToastAndroid  } from 'react-native';
+import React,{ useEffect } from 'react';
+import { View,Text,StyleSheet,TouchableOpacity  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg';
 import { useSelector, useDispatch } from 'react-redux';
@@ -67,12 +67,9 @@ export const Refrige = (props) => {
           <Text style={{fontWeight:"bold"}}>Màn hình : </Text>
           <Text>      <Text style={styles.color_module}><MaterialCommunityIcons name="format-list-bulleted" color="#424242" size={15} /> Foods</Text> - Danh sách thực phẩm</Text>
           <Text>      <Text style={styles.color_module}><MaterialCommunityIcons name="basket-plus-outline" color="#424242" size={15} /> Plus</Text> - Thêm thực phẩm</Text>
-          <Text>      <Text style={styles.color_module}><MaterialCommunityIcons name="beaker-remove-outline" color="#424242" size={15} /> Recycle</Text> - Danh sách thực phẩm đã xóa</Text>
           <Text>      <Text style={styles.color_module}><MaterialCommunityIcons name="line-scan" color="#424242" size={15} /> Scan</Text> - Quét mã QR tủ lạnh</Text>
           <Text>      <Text style={styles.color_module}><MaterialCommunityIcons name="texture-box" color="#424242" size={15} /> Refrigerator</Text> - Dán nhãn QR cho tủ lạnh</Text>
           <Text style={{fontWeight:"bold"}}>Chú thích:</Text>
-          <Text>- Thực phẩm đã bị xóa sẽ tự động xóa vĩnh viễn </Text>
-          <Text>( không khôi phục được ) sau 48 giờ</Text>
           <Text>- QR ở trên sẽ luôn tạo mới và không bao  </Text>
           <Text>trùng nhau, quét đúng Qr đã dán trên tủ lạnh.</Text>
         </View>

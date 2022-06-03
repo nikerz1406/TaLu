@@ -47,19 +47,22 @@ export const foodsSlice = createSlice({
     // The `builder` callback form is used here because it provides correctly typed reducers from the action creators
     builder.addCase(getFoods.fulfilled, (state, { payload }) => {
       // upload status
+      state.status = 'succeeded';
       return foods.reload(state,payload.foods);
 
     })
     .addCase(getFoods.pending, (state, action) => {
+      state.status = 'pending';
       console.log("pending")
     })
     .addCase(getFoods.rejected, (state, action) => {
-      
+      state.error = false;
+      state.status = 'failed';
       console.log("error")
     })
 
     builder.addCase(addFoods.fulfilled, (state, { payload }) => {
-      
+
       return foods.add(state,payload);
 
     })
@@ -67,6 +70,18 @@ export const foodsSlice = createSlice({
       console.log("pending")
     })
     .addCase(addFoods.rejected, (state, action) => {
+      console.log("error")
+    })
+
+    builder.addCase(removeFoods.fulfilled, (state, { payload }) => {
+
+      return foods.remove(state,payload.code);
+
+    })
+    .addCase(removeFoods.pending, (state, action) => {
+      console.log("pending")
+    })
+    .addCase(removeFoods.rejected, (state, action) => {
       console.log("error")
     })
 
@@ -115,9 +130,16 @@ foods.remove = (state,code)=>{
 
 export const getFoods = createAsyncThunk(
   'foods/getFoods',
-  async (item = {page : 0,refrigera_id :null}, thunkAPI) => {
-
+  async (item = { page : 0,refrigera_id :null }, thunkAPI) => {
     const response = await axiosClient.get("refrigerator/" + item.page + "/" + item.refrigera_id);
+    return response;
+  }
+)
+
+export const removeFoods = createAsyncThunk(
+  'foods/removeFoods',
+  async (code = null, thunkAPI) => {
+    const response = await axiosClient.delete("refrigerator/" +code);
     return response;
   }
 )

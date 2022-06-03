@@ -29,6 +29,11 @@ export const Qr = (props) => {
 
   },[]);
 
+  const reloadPermission = async ()=>{
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+  }
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       // do something
@@ -48,10 +53,19 @@ export const Qr = (props) => {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return(
+      <View style={styles.camera}>
+        <Text>Requesting for camera permission</Text>
+        <TouchableOpacity  onPress ={reloadPermission} style={{marginTop:10}} ><Text style={[styles.button,styles.open_scan]}>Open Permission</Text></TouchableOpacity>
+      </View>
+    );
   }
+  
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (<View style={styles.camera} >
+        <Text>No access to camera</Text>
+        <TouchableOpacity  onPress ={reloadPermission} style={{marginTop:10}} ><Text style={[styles.button,styles.open_scan]}>Open Permission</Text></TouchableOpacity>
+      </View>);
   }
 
   return (

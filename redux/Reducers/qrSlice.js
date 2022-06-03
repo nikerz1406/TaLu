@@ -6,7 +6,7 @@ const initialState = {
   registed: true,
   scanning:false,
   base64:null,
-  old:null
+  old:'738ffbf75758d94c'
 }
 
 // // product case 

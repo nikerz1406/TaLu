@@ -1,10 +1,9 @@
 import React,{ useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text,TouchableOpacity,Button } from 'react-native';
+import {  View, FlatList, StyleSheet, Text,TouchableOpacity,Alert  } from 'react-native';
 import { MaterialCommunityIcons,Ionicons,FontAwesome } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { filterReducers } from '../redux/Reducers/filtersSlice';
-import { foodsReducers,getFoods } from '../redux/Reducers/foodsSlice';
-import  { recycleReducers } from '../redux/Reducers/recycleSlice';
+import { foodsReducers,getFoods,removeFoods } from '../redux/Reducers/foodsSlice';
 import { badgeReducers } from '../redux/Reducers/badgeSlice';
 import { useNavigation } from '@react-navigation/native';
 import { foodColors,foodColorsDark } from '../utilities/const';
@@ -26,7 +25,7 @@ const clickName = (dispatch,flatListRef,mode,filterIcon)=>{
   dispatch(filterReducers({type:"FILTER_NAME"}));
 
   var icon = mode ? 'arrow-down' : 'arrow-up';
-  filterIcon({name:icon})
+  filterIcon({name:icon,active_name:true})
 
   flatListRef.scrollToOffset({ animated: true, offset: 0 });
 }
@@ -36,7 +35,7 @@ const clickDate = (dispatch,mode,filterIcon)=>{
   dispatch(foodsReducers({type:"SORT_DATE",filterDate:mode}));
 
   var icon = mode ? 'calendar-text' : 'calendar-week';
-  filterIcon({date:icon})
+  filterIcon({date:icon,active_date:true})
 
 }
 
@@ -51,12 +50,15 @@ const onEnd = (dispatch,page,qr) => {
 
 export const FoodLists = () => {
   const [isFetching, setIsFetching] = useState(false);
+  const status = useSelector((state) => state.foods.status);
   const listFoods = useSelector((state) => state.foods.data);
   const filterFoods = useSelector((state) => state.filterFoods);
   const page = useSelector((state) => state.foods.page);
+  const [nameBorderColor,setNameBorderColor] = useState(foodColorsDark.default);
+  const [dateBorderColor,setDateBorderColor] = useState(foodColorsDark.default);
   var flatListRef = null;
   const [iconFilterName,setIconFilterName] = useState('md-search-outline');
-  const [colorFilterType,setColorFilterType] = useState('#424242');
+  const [colorFilterType,setColorFilterType] = useState(foodColorsDark.default);
   const [iconFilterDate,setIconFilterDate] = useState('text-search');
   const qr = useSelector((state) => state.qr.value);
   const dispatch = useDispatch();
@@ -65,13 +67,19 @@ export const FoodLists = () => {
   
   const filterIcon = function({ 
     // default value
-    name='md-search-outline',
-    type=foodColorsDark.default,
-    date='text-search'
+    name = 'md-search-outline',
+    type = foodColorsDark.default,
+    active_name = false,
+    date = 'text-search',
+    active_date = false,
   }){
     setColorFilterType(type)
     setIconFilterName(name)
     setIconFilterDate(date)
+    var color_active_name = active_name ? foodColorsDark.active : foodColorsDark.default
+    setNameBorderColor(color_active_name)
+    var color_active_date = active_date ? foodColorsDark.active : foodColorsDark.default
+    setDateBorderColor(color_active_date)
   }
   
   useEffect(() => {
@@ -90,7 +98,7 @@ export const FoodLists = () => {
       // e.preventDefault();
 
       // get data
-      // dispatch(getFoods());
+      dispatch(getFoods({page}));
 
       // Do something manually
       dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
@@ -100,35 +108,28 @@ export const FoodLists = () => {
     return unsubscribe;
   }, [navigation]);
 
-  const fetchData = () => {
-    // dispatch(getAllTopicAction(userParamData));
-    setIsFetching(false);
-  };
-  
   const onRefresh = () => {
     console.log("refresh")
+    // get data
+    dispatch(getFoods({page,refrigera_id:qr}));
     setIsFetching(true);
-    fetchData();
   };
 
   return (
+    
     <View style={styles.container}>
       <View style={styles.head_table}>
-        <View style={styles.fitler}>
-          <TouchableOpacity onPress={ ()=>clickFilter(dispatch,flatListRef,filterFoods.type,filterIcon) }>
-           <MaterialCommunityIcons name="filter" size={25} color={colorFilterType}/>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.name}>
-          <TouchableOpacity onPress={() => clickName(dispatch,flatListRef,filterFoods.name,filterIcon) } style={{width:"30%"}}>
-            <Text syle={{ fontWeight:"bold" }}>Name <Ionicons name={iconFilterName} /></Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.plus}>
-          <TouchableOpacity onPress={() => clickDate(dispatch,filterFoods.date,filterIcon) }>
-            <MaterialCommunityIcons  name={iconFilterDate} size={25}/>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity  style={[styles.fitler,{borderColor:colorFilterType}]} onPress={ ()=>clickFilter(dispatch,flatListRef,filterFoods.type,filterIcon) }>
+          <MaterialCommunityIcons name="filter" size={25} color={colorFilterType}/>
+          <Text style={{color:colorFilterType}}>Filter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => clickName(dispatch,flatListRef,filterFoods.name,filterIcon) } style={[styles.name,{borderColor:nameBorderColor}]}>
+          <Text style={{color:nameBorderColor}}>Name <Ionicons name={iconFilterName} /></Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.plus,{borderColor:dateBorderColor}]} onPress={() => clickDate(dispatch,filterFoods.date,filterIcon) }>
+          <Text style={{color:dateBorderColor}}>Date </Text>
+          <MaterialCommunityIcons  name={iconFilterDate} color={dateBorderColor} size={20}/>
+        </TouchableOpacity>
       </View>
       <FlatList
         style={{ 
@@ -146,19 +147,27 @@ export const FoodLists = () => {
           refreshing={isFetching}
       />
     </View>
+    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width:"100%"
+    width:"100%",
   },
   modal:{
     backgroundColor: 'red', padding: 20,
     flex:1
   },
-  head_table:{ flexDirection:"row",marginBottom:10,borderBottomColor:"#757575",borderBottomWidth:1,marginHorizontal:20,paddingBottom:10},
+  head_table:{ 
+    flexDirection:"row",
+    borderBottomColor:"#757575",
+    borderBottomWidth:1,
+    paddingBottom:10,
+    paddingLeft:10,
+    margin:10,
+  },
   item: {
     flexDirection:"row",
     marginBottom: 8,
@@ -167,15 +176,33 @@ const styles = StyleSheet.create({
     borderRadius:4,
   },
   fitler:{ 
-    flex:1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    flexDirection:"row",
+    borderWidth:1,
+    borderRadius:45,
+    paddingLeft:10,
+    paddingRight:10,
+    alignItems:"center",
   },
-  name:{ flex:6,marginLeft:15,marginRight:15 },
+  btn_remove:{
+    flex:1,
+    justifyContent: 'center',
+  },
+  name:{
+    borderWidth:1,borderRadius:45,padding:5,alignContent:"center",marginHorizontal:10,
+  },
+  item_name:{
+    flex:5,
+    paddingHorizontal:20
+  },
   plus:{ 
-    justifyContent: 'flex-end',
-    alignItems:"flex-end",
-    flex:2,
-   },
+    alignItems:"center",
+    flexDirection:"row",
+    borderWidth:1,
+    borderRadius:45,
+    paddingLeft:10,
+    paddingRight:10,
+  },
   date_body:{
     flex:2,
     marginRight:10
@@ -190,21 +217,25 @@ const renderItem = ({ item,dispatch,mode }) => {
 
   const color = item.type == 0 ? foodColors.red : item.type == 1 ? foodColors.green : foodColors.yellow;
   // const dispatch = useDispatch();
-  const clickRemove = ()=>{
-    console.log("click remove")
-    dispatch(foodsReducers({type:"REMOVE_FOOD",code:item.code}))
-    dispatch(recycleReducers({type:"ADD_RECYCLE",item:item}))
-    dispatch(badgeReducers({type:"BADGE",module:'RECYCLE',command:'add'}))
-    dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
-  }
+
+  const clickRemove = () =>
+  Alert.alert('Remove', item.name, [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    { text: 'OK', onPress: () => {
+      console.log("click remove")
+      dispatch(removeFoods(item.code))
+      dispatch(badgeReducers({type:"BADGE",module:'FOODS',command:'remove'}))
+    }},
+  ]);
+
   return(
     <View style={[styles.item,{backgroundColor:color}]}>
-      <View style={styles.fitler}>
-        <TouchableOpacity onPress={ clickRemove } style={{ marginLeft:15 }}>
-          <FontAwesome name="remove" size={20} color="#424242" />
-        </TouchableOpacity>  
-      </View>
-      <View style={styles.name}><Text>{item.name}</Text></View>
+      
+      <View style={styles.item_name}><Text>{item.name}</Text></View>
       { (mode == 0 || mode == 1) && <View style={styles.date_body}>
         <Text>{item.date}</Text><Text>{item.time}</Text> 
       </View>
@@ -213,7 +244,11 @@ const renderItem = ({ item,dispatch,mode }) => {
         <Text>{item.sort_time_txt}</Text>
       </View>
       }
-      
+      <View style={styles.btn_remove} >
+        <TouchableOpacity onPress={ clickRemove } style={{ marginRight:15 }}>
+          <FontAwesome name="remove" size={20} color="#424242" />
+        </TouchableOpacity>  
+      </View>
     </View>
   )
 };     

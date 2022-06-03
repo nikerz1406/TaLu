@@ -17,8 +17,8 @@ export const filterSlice = createSlice({
             state.name = !state.name;
             return state;
         case "FILTER_DATE":
-            // state.date = state.date == 3 ? 0 : state.date+1;
-            state.date = state.date == 1 ? 0 : state.date+1;
+            // state.date = state.date == 3 ? 0 : state.date + 1;
+            state.date = state.date == 1 ? 0 : state.date + 1;
             return state;
         default:
             return state;

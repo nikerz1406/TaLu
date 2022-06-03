@@ -21,7 +21,7 @@ export const Header = props => {
   const image = { uri: HEADER_IMAGE };
   return (
     <View style={styles.header}>
-      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+      {/* <ImageBackground source={image} resizeMode="cover" style={styles.image}> */}
         <View style={styles.container}>
           <Image style={styles.logo} source={{uri:source_img}} />
           <Text style={styles.title} >{props.title}</Text>
@@ -31,7 +31,7 @@ export const Header = props => {
             </TouchableOpacity> }
           </View>
         </View>
-      </ImageBackground>
+      {/* </ImageBackground> */}
     </View>
   );
   
@@ -92,8 +92,10 @@ const styles = StyleSheet.create({
     flex:1,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor:"#E0E0E0",
-    width:"100%"
+    backgroundColor:"#D1C4E9",
+    width:"100%",
+    elevation: 4, // remove shadow on Android
+    shadowOpacity: 4, // remove shadow on iOS
   },
 })
 

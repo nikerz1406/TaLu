@@ -32,10 +32,6 @@ const badge = {
       'add':null,
       'remove':null
   },
-  'RECYCLE':{
-      'add':null,
-      'remove':null
-  },
   'PLUS':{
       'add':null,
       'remove':null
@@ -48,15 +44,6 @@ const badge = {
       'add':null,
       'remove':null
   }
-}
-badge.RECYCLE.add = function(state){
-
-  state.remove = state.remove != null ? state.remove+1 : 1;
-  return state;
-}
-badge.RECYCLE.remove = function(state){
-  state.remove = null;
-  return state;
 }
 badge.FOODS.add = function(state){
   

@@ -25,6 +25,7 @@ export const Tabs = props => {
         labelStyle={{ fontSize: 12 }}
         style={{ backgroundColor: '#fff' }}
         overlayColor="transparent"
+        
       >
         <Tab.Screen
           name="Foods"
@@ -50,17 +51,6 @@ export const Tabs = props => {
             ),
           }}
         >{props=><Template screen="Plus" />}</Tab.Screen>
-        <Tab.Screen
-          name="Recycle"
-          
-          options={{
-            tabBarLabel: 'Recycle',
-            tabBarBadge:badgeRemove,
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="beaker-remove-outline" color={color} size={20} />
-            ),
-          }}
-        >{props=><Template screen="Recycle" />}</Tab.Screen>
         <Tab.Screen
           name="Qr"
           
